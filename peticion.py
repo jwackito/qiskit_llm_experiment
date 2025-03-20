@@ -1,7 +1,7 @@
 import requests, json
 from openai import OpenAI
 
-server_endpoint = "***¿¿¿andá a saber qué va acá???***"
+server_endpoint = "*** andá a saber qué poner acá ***"
 api_key = "lm-studio"
 
 headers = {
@@ -11,7 +11,7 @@ headers = {
 
 version_objetivo = "0.46.0"
 system_content = '''
-Obten una respuesta con formato tabular expresada con el lenguaje de marcado "Markdown" con formato Markdown que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
+Obten una respuesta con formato tabular que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
 
 Columna 1: Categoría: Tipo de cambio (Ej: Cambio de afectación estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, afectación de módulo, función, clase, método, grado de relación con ing. de software clásica (SE) o ing. de software cuántica (QSE), etc). Dato obligatorio.
 Columna 2: Flujo de cambio, indicando las versiones involucradas de origen y destino, no es necesario indicar versiones bug-fixes sino solo "x" para ese último dígito (Formato: X.X.x → Y.Y.x). Dato obligatorio.
@@ -20,10 +20,10 @@ Columna 4: Ejemplo de código en versión de origen, fragmento Python previo al 
 Columna 5: Ejemplo de código en versión de destino, fragmento Python posterior al cambio.  Dato opcional.
 Columna 6: Grado de dificultad asociada al nivel de esfuerzo requerido de migración (Nula/Baja/Moderada/Alta).  Dato obligatorio.
 Columna 7: Grado de afectación SE/QSE, en relación con Ingeniería de Software Clásica (SE) o Cuántica (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.  Dato obligatorio.
-Columna 8: Referencia: Enlace oficial o hiperlink a una fuente autoritativa de documentación, aclarando si la fuente de referencia es principal o secundaria segun las restricciones; por ej: "<link_fuente> (fuente principal)". Dato opcional.
+Columna 8: Referencia: Enlace oficial o hiperlink a una fuente autoritativa de documentación, aclarando  a continuación del enlace, si la fuente de referencia es "principal" o "secundaria" según las restricciones indicadas debajo; por ej: "<link_fuente> (fuente principal)" o bien ""<link_fuente> (fuente secundaria)"". Dato opcional.
 
 Restricciones:
-
+Respuesta en formato tabular expresada con el lenguaje de marcado "Markdown" con formato Markdown. Evita saltos de línea innecesarios en una misma fila de tabla.
 Evitar texto externo a la tabla mísma, explicaciones extras o aclaraciones, sólo limítate a entregar una tabla resultante.
 Los códigos python de ejemplos deben ser correctos, extraídos de fuentes especificadas, en caso de no encontrar, no indicar ninguno.
 Usar como referencias, hipervínculos validados y oficiales.
@@ -31,7 +31,6 @@ No consolidar escenarios y cambios, priorizar la abarcabildiad y extensión de e
 Verificar la visualización correcta en formato Markdown.
 Si para alguna celda opcional, no se dispone de información supervisada, indicarla como vacía, es decir, con valor: "".
 Evitar escenarios hipotéticos o no documentados, pero se exhaustivo enunciando los documentados.
-
 Utiliza exclusivamente la siguiente lista de fuentes (principales y secundarias) de Qiskit, sigue este ordenamiento para su revisión exhaustiva:
 Fuentes principales:
 Qiskit SDK realce notes (Enlace: https://docs.quantum.ibm.com/api/qiskit/release-notes)
@@ -39,7 +38,7 @@ Qiskit Changelog (Enlace: https://github.com/qiskit/qiskit/releases)
 Fuentes secundarias:
 Qiskit Leatest updates (Enlace: https://docs.quantum.ibm.com/guides/latest-updates)
 Qiskit Migration guides (Enlace: https://docs.quantum.ibm.com/migration-guides)
-Genera ante cada cambio o migración hallada a partir de indagar todas estas fuentes (5 - cinco), una nueva fila de la tabla.
+Para la detección, examina en orden el listado de fuentes indicado previamente (4 fuentes bibliográficas) generando una nueva fila de la tabla.
 '''
 
 user_content = f'''Describe con el mayor grado de detalle posible, cada uno de los escenarios de migración y refactoring en Qiskit, exclusivamente para la versión: {version_objetivo}. Indaga la mayor cantidad de información disponible para que la tabla sea lo más completa posible.'''
