@@ -1,5 +1,6 @@
 import os, argparse, requests
 from bs4 import BeautifulSoup
+from peticion_openai import invoke_openai
 
 def clean_content(soup):
 
@@ -92,3 +93,13 @@ if __name__ == "__main__":
             f.write(content)
         
         print(f"El contenido se ha guardado en: {file_path}")
+
+         # Invocar la función de OpenAI con el contenido del archivo
+        print(f"Invocación de OpenAI con el contenido de la versión {args.version} ...")
+        openai_response = invoke_openai(args.version, url_qiskit_release_notes)
+        
+        if openai_response:
+            print("\nRespuesta del modelo de OpenAI:\n")
+            print(openai_response)
+        else:
+            print("\nNo se pudo obtener una respuesta del modelo de OpenAI.")
