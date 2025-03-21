@@ -2,7 +2,7 @@ import requests, json
 from openai import OpenAI
 
 server_endpoint = "*** andá a saber qué poner acá ***"
-api_key = "lm-studio"
+api_key = "*** andá a saber qué poner acá ***"
 
 headers = {
     "Content-Type": "application/json",
@@ -78,6 +78,6 @@ except Exception as e:
     print(f"Error: {str(e)}")
     print("\nPosibles soluciones:")
     print("1. Verifica que el servidor está corriendo y accesible")
-    print("2. Confirma que la URL incluye el puerto y ruta correctos (/v1)")
+    print("2. Confirma que la URL incluye el puerto y ruta correctos")
     print("3. Asegúrate que el modelo está cargado en el servidor remoto")
     print("4. Comprueba que la API key es correcta")
