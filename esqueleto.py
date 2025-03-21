@@ -2,7 +2,7 @@
 from openai import OpenAI
 
 # Point to the local server
-client = OpenAI(base_url="localhost:puerto/v1", api_key="lm-studio")
+client = OpenAI(base_url="localhost:puerto/v1", api_key="api_key")
 
 completion = client.chat.completions.create(
   model="lmstudio-community/gemma-3-27b-it-GGUF",
