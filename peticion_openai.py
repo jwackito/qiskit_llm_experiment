@@ -1,4 +1,4 @@
-import requests, json
+import os, requests, json
 from openai import OpenAI
 
 server_endpoint = "*** andá a saber qué poner acá ***"
@@ -9,7 +9,19 @@ headers = {
     "Authorization": "Bearer lm-studio"
 }
 
-version_objetivo = "0.46.0"
+# Ruta al archivo generado por el script previo
+downloads_dir = os.path.join(os.getcwd(), "descargas")
+file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{version_objetivo}.md")
+
+# Verificar si el archivo existe
+if not os.path.exists(file_path):
+    print(f"Error: El archivo {file_path} no existe. Ejecuta primero el script de scraping para generar el archivo.")
+    exit(1)
+
+# Leer el contenido del archivo
+with open(file_path, 'r', encoding='utf-8') as f:
+    file_content = f.read()
+
 system_content = '''
 Obten una respuesta con formato tabular que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
 
@@ -41,7 +53,12 @@ Qiskit Migration guides (Enlace: https://docs.quantum.ibm.com/migration-guides)
 Para la detección, examina en orden el listado de fuentes indicado previamente (4 fuentes bibliográficas) generando una nueva fila de la tabla.
 '''
 
-user_content = f'''Describe con el mayor grado de detalle posible, cada uno de los escenarios de migración y refactoring en Qiskit, exclusivamente para la versión: {version_objetivo}. Indaga la mayor cantidad de información disponible para que la tabla sea lo más completa posible.'''
+user_content = f'''
+Describe con el mayor grado de detalle posible, cada uno de los escenarios de migración y refactoring en Qiskit, exclusivamente para la versión: {version_objetivo}. 
+Indaga la mayor cantidad de información disponible para que la tabla sea lo más completa posible.
+
+A continuación, se proporciona el contenido de las notas de la versión {version_objetivo}: {file_content}
+'''
 
 messages = [
     {
