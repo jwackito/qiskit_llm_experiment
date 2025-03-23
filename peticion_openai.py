@@ -75,7 +75,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     payload = {
         "model": "lmstudio-community/gemma-3-27b-it-GGUF",
         "messages": messages,
-        "temperature": 1
+        "temperature": 0.1
     }
 
     try:
@@ -101,6 +101,11 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             f.write(completion.choices[0].message.content)
         
         print(f"El contenido de respuesta del modelo se ha guardado en: {file_answer_path}")
+
+        if completion.choices[0].message.content:
+            print("\nRespuesta del modelo de OpenAI obtenida y almacenada exitosamente:\n")
+        else:
+            print("\nNo se pudo obtener una respuesta del modelo de OpenAI.")
 
     except Exception as e:
         print(f"Error: {str(e)}")

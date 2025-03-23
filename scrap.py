@@ -1,6 +1,7 @@
 import os, argparse, requests
 from bs4 import BeautifulSoup
 from peticion_openai import invoke_openai
+from verificacion import verificar_documentacion
 
 def clean_content(soup):
 
@@ -69,12 +70,14 @@ if __name__ == "__main__":
 
     # Configurar el parser de argumentos
     parser = argparse.ArgumentParser(description="Extracción de documentación oficial Qiskit")
-    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="1.0.0")
-    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default="false")
+    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="1.0")
+    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=False)
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default="scraped_content")
     parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="http:prueba.com/openai")
     parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="1234567890")
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
+    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=False)
+    parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
     # Parsear los argumentos
     args = parser.parse_args()
     
@@ -85,31 +88,30 @@ if __name__ == "__main__":
     content = extract_main_content(url_qiskit_release_notes)
     
     if content:
-        # print(content)
 
         # Crear la carpeta "scrapped_content" si no existe
         downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
         if not os.path.exists(downloads_dir):
+            print(f"Creando el directorio ... {downloads_dir}", "green")
             os.makedirs(downloads_dir)
         
         # Guardar el contenido en un archivo dentro de la carpeta "scrapped_content"
         file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
+        print(f"Sobreescribiendo el contenido de {file_path} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print(f"El contenido se ha guardado en: {file_path}")
+        print(f"Contenido obtenido desde {url_qiskit_release_notes} guardado en: {file_path}")
 
-        # Invocar la función de OpenAI con el contenido del archivo
-        openai_response = invoke_openai(
-            args.version, 
-            url_qiskit_release_notes, 
-            args.url_openai_server_endpoint, 
-            args.openai_api_key, 
-            args.usa_qiskit_release_notes, 
-            args.model_answers_path
-        )
-        
-        if openai_response:
-            print("\nRespuesta del modelo de OpenAI obtenida y almacenada exitosamente:\n")
-        else:
-            print("\nNo se pudo obtener una respuesta del modelo de OpenAI.")
+        if args.invoke_openai:
+            openai_response = invoke_openai(
+                args.version, 
+                url_qiskit_release_notes, 
+                args.url_openai_server_endpoint, 
+                args.openai_api_key, 
+                args.usa_qiskit_release_notes, 
+                args.model_answers_path
+            )
+
+        if args.verificacion:           
+            verificar_documentacion(content, args.version)
