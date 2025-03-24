@@ -12,10 +12,10 @@ def verificar_cantidad_caracteres(scrapted_content, cantidad_caracteres):
 	)
 	return resultado
 
-def comparar_cadenas(cadena1, cadena2):
+def comparar_cadenas(cadena_remota, cadena_local):
 
     # Desactiva autojunk para detectar TODAS las diferencias
-	differ = difflib.SequenceMatcher(None, cadena1, cadena2, autojunk=False)
+	differ = difflib.SequenceMatcher(None, cadena_remota, cadena_local, autojunk=False)
 	diferencias = []
 
 	for opcode in differ.get_opcodes():
@@ -24,8 +24,8 @@ def comparar_cadenas(cadena1, cadena2):
 		inicio2, fin2 = opcode[3], opcode[4]
 
 		if tipo != 'equal':
-			seg1 = cadena1[inicio1:fin1]
-			seg2 = cadena2[inicio2:fin2]
+			seg1 = cadena_remota[inicio1:fin1]
+			seg2 = cadena_local[inicio2:fin2]
 			diferencias.append({
 				"tipo": tipo,
 				"str1_pos": (inicio1, fin1),
@@ -37,6 +37,10 @@ def comparar_cadenas(cadena1, cadena2):
 	return diferencias
 
 def verificar_contenido(contenido_remoto, contenido_local):
+	'''
+		El contenido remoto es el que se recopiló automáticamente, 
+		mientras que el local es producto de una copia manual del usuario sobre la documentación.
+	'''
 
 	print(f"Comprobación de contenido --> ", end="")
 
@@ -47,11 +51,11 @@ def verificar_contenido(contenido_remoto, contenido_local):
 	else:
 		print("diferencias encontradas:")
 		for diff in diferencias:
-			print(f"- En {diff['str1_pos']}: '{diff['str1_segmento']}' <--> en {diff['str2_pos']}: '{diff['str2_segmento']}'")
+			print(f"- En {diff['str1_pos']}: '{diff['str1_segmento']}' < -- > en {diff['str2_pos']}: '{diff['str2_segmento']}'")
 
 def verificar_documentacion(scrapted_content, version):
 
-	print("\nEjecutando verificaciones ... ")
+	print("\n----------   Ejecutando verificaciones ...   ----------")
 
 	file_path = f"verificacion/qiskit_release_note_{version}.md"
 	try:
@@ -64,7 +68,7 @@ def verificar_documentacion(scrapted_content, version):
 		verificar_contenido(scrapted_content, contenido_md)
 
 	except FileNotFoundError:
-		print(f"Error: El archivo '{file_path}' no existe.")
+		print(f"Error: No se encontró el archivo {file_path}, necesario para establecer las comparaciones ...")
 	except Exception as e:
 		print(f"Error al leer el archivo: {str(e)}")
 	

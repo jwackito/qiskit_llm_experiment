@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 from datetime import datetime
 
-def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path):
+def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature):
 
     print(f"Invocación de OpenAI con el contenido de la versión {version_objetivo} --> url: {url_objetivo} ...")
 
@@ -73,9 +73,9 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     ]
 
     payload = {
-        "model": "lmstudio-community/gemma-3-27b-it-GGUF",
+        "model": model,
         "messages": messages,
-        "temperature": 0.1
+        "temperature": temperature
     }
 
     try:
@@ -89,21 +89,30 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             temperature=payload['temperature']
         )
         
-        # Crear la carpeta "llm_answers" si no existe
-        llm_answers_dir = os.path.join(os.getcwd(), model_answers_path)
-        if not os.path.exists(llm_answers_dir):
-            os.makedirs(llm_answers_dir)
-        
-        # Guardar el contenido en un archivo dentro de la carpeta "llm_answers"
-        fecha_hora = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        file_answer_path = os.path.join(llm_answers_dir, f"respuesta_{payload['model'].split("/")[1]}_v{version_objetivo}_{fecha_hora}.md")
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(completion.choices[0].message.content)
-        
-        print(f"El contenido de respuesta del modelo se ha guardado en: {file_answer_path}")
+        print(completion.choices[0].message.content)
 
-        if completion.choices[0].message.content:
-            print("\nRespuesta del modelo de OpenAI obtenida y almacenada exitosamente:\n")
+        # Crear la carpeta "llm_answers" si no existe
+        llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path))
+        if not os.path.exists(llm_answers_dir):
+            os.makedirs(llm_answers_dir, exist_ok=True)
+        
+        # Guardar el contenido en un archivo dentro de la carpeta configurada (default = "/llm_answers")
+        fecha_hora = datetime.now().strftime("%d_%m_%Y-%H_%M_%S")
+        file_name = f"model_{payload['model'].split("/")[1]}_v{version_objetivo.replace('.', '_')}-{fecha_hora}.md"
+
+        file_answer_path = os.path.join(llm_answers_dir, file_name)
+
+        with open(file_answer_path, 'w', encoding='utf-8') as f:
+            # Asumiendo que 'completion' es un objeto de OpenAI u similar
+            contenido = completion.choices[0].message.content
+            if contenido:
+                f.write(contenido)
+                print(f"Archivo creado exitosamente en: {file_answer_path}")
+            else:
+                print("Error: El contenido está vacío o no existe")
+
+        if completion.choices[0].message.content:            
+            print(f"\nRespuesta del modelo de OpenAI obtenida y almacenada exitosamente. Directorio: /{model_answers_path}/{file_name}")
         else:
             print("\nNo se pudo obtener una respuesta del modelo de OpenAI.")
 

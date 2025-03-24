@@ -70,14 +70,16 @@ if __name__ == "__main__":
 
     # Configurar el parser de argumentos
     parser = argparse.ArgumentParser(description="Extracción de documentación oficial Qiskit")
-    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="1.0")
-    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=False)
+    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="0.46")
+    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=True)
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default="scraped_content")
-    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="http:prueba.com/openai")
-    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="1234567890")
+    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
+    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
-    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=False)
+    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=True)
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
+    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default="lmstudio-community/gemma-3-27b-it-GGUF")
+    parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=1)
     # Parsear los argumentos
     args = parser.parse_args()
     
@@ -92,7 +94,7 @@ if __name__ == "__main__":
         # Crear la carpeta "scrapped_content" si no existe
         downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
         if not os.path.exists(downloads_dir):
-            print(f"Creando el directorio ... {downloads_dir}", "green")
+            print(f"Creando el directorio ... {downloads_dir}")
             os.makedirs(downloads_dir)
         
         # Guardar el contenido en un archivo dentro de la carpeta "scrapped_content"
@@ -105,12 +107,14 @@ if __name__ == "__main__":
 
         if args.invoke_openai:
             openai_response = invoke_openai(
-                args.version, 
-                url_qiskit_release_notes, 
-                args.url_openai_server_endpoint, 
-                args.openai_api_key, 
-                args.usa_qiskit_release_notes, 
-                args.model_answers_path
+                version_objetivo = args.version, 
+                url_objetivo = url_qiskit_release_notes, 
+                url_openai_server_endpoint = args.url_openai_server_endpoint, 
+                openai_api_key = args.openai_api_key, 
+                usar_qiskit_release_notes = args.usa_qiskit_release_notes, 
+                model_answers_path = args.model_answers_path, 
+                model = args.model,
+                temperature = args.temperature
             )
 
         if args.verificacion:           
