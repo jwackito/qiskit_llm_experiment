@@ -959,6 +959,7 @@ The Operator.power() method now works with floating-point exponents, matching th
 
 Fixed an issue with the OptimizeSwapBeforeMeasure pass where it would incorrectly optimize circuits involving swap and measure instructions. For example:
 
+
 from qiskit import QuantumCircuit
 from qiskit.transpiler.passes import OptimizeSwapBeforeMeasure
 pass_ = OptimizeSwapBeforeMeasure()
@@ -970,6 +971,30 @@ print(qc.draw())
 print(pass_(qc).draw())
 would previously print:
 
+
+        ┌─┐┌─┐
+q_0: ─X─┤M├┤M├
+      │ └╥┘└╥┘
+q_1: ─X──╫──╫─
+         ║  ║
+c: 1/════╩══╩═
+         0  0
+     ┌─┐
+q_0: ┤M├───
+     └╥┘┌─┐
+q_1: ─╫─┤M├
+      ║ └╥┘
+c: 1/═╩══╩═
+      0  0
+and now the second circuit is correctly optimized to:
+
+
+q_0: ──────
+     ┌─┐┌─┐
+q_1: ┤M├┤M├
+     └╥┘└╥┘
+c: 1/═╩══╩═
+      0  0
 Fixed an issue with the QPY serialization when a QuantumCircuit contained multiple custom instructions instances that have the same name attribute. In QPY format versions before Version 11 the QPY payload did not differentiate between these instances and would only serialize the properties of the first instance in a circuit. This could potentially cause an incorrect deserialization if the other properties of the custom instruction were different but the names were the same. This has been fixed in QPY Version 11 so that each instance of a custom instruction is serialized individually and there will no longer be a potential conflict with overlapping names. Fixes #8941.
 
 Fixed an issue with the qpy.dump() function where, when the use_symengine flag was set to a truthy object that evaluated to True but was not actually the boolean True, the generated QPY payload would be corrupt. For example, if you set use_symengine to HAS_SYMENGINE, this object evaluates to True when cast as a bool, but isn’t actually True.
@@ -993,4 +1018,3 @@ The parametric form of XXPlusYYGate and XXMinusYYGate returned from get_standard
 θ rotation.
 
 The TemplateOptimization pass will now return parametric expressions using the native symbolic expression format of ParameterExpression, rather than always using Sympy. For most supported platforms, this means that the expressions will be Symengine objects. Previously, the pass could return mismatched objects, which could lead to later failures in parameter-handling code.
-

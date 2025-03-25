@@ -52,19 +52,21 @@ def extract_main_content(url):
     # Limpiar el contenido
     cleaned_soup = clean_content(main_content)
     
+    # Comento las líneas de limpieza para que no se modifique el código python
+
     # Extraer texto manteniendo saltos de línea básicos
     text = cleaned_soup.get_text(separator='\n', strip=True)
     
     # Eliminar líneas vacías múltiples y espacios excesivos
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    cleaned_text = '\n'.join(lines)
+    #lines = [line.strip() for line in text.splitlines() if line.strip()]
+    #cleaned_text = '\n'.join(lines)
     
     # Eliminar saltos de línea innecesarios dentro de párrafos
-    cleaned_text = ' '.join(cleaned_text.split())  # Elimina espacios múltiples
-    cleaned_text = cleaned_text.replace(' .', '.')  # Corrige espacios antes de puntos
-    cleaned_text = cleaned_text.replace(' ,', ',')  # Corrige espacios antes de comas
+    #cleaned_text = ' '.join(cleaned_text.split())  # Elimina espacios múltiples
+    #cleaned_text = cleaned_text.replace(' .', '.')  # Corrige espacios antes de puntos
+    #cleaned_text = cleaned_text.replace(' ,', ',')  # Corrige espacios antes de comas
     
-    return cleaned_text
+    return text
 
 if __name__ == "__main__":
 
@@ -73,14 +75,14 @@ if __name__ == "__main__":
     parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="0.46")
     parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=True)
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default="scraped_content")
-    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
-    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
+    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="http://dominio.com:puerto/subdominio")
+    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="api-key")
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
-    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=True)
-    parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
+    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=False)
     parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default="lmstudio-community/gemma-3-27b-it-GGUF")
-    parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=1)
-    # Parsear los argumentos
+    parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=0)
+    parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
+
     args = parser.parse_args()
     
     # Construir la URL usando la versión proporcionada
