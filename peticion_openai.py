@@ -17,21 +17,20 @@ def obtener_ultimas_dos_secciones(ruta):
     return os.sep.join(ultimas_dos)
 
 def obtener_system_prompt(url_objetivo, version_objetivo):
+    version = version_objetivo + ".0"
     return f'''
         Obten una respuesta con formato tabular que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
-
-        Columna 1: Categoría: Tipo de cambio (Ej: Cambio de afectación estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, afectación de módulo, función, clase, método, grado de relación con ing. de software clásica (SE) o ing. de software cuántica (QSE), etc).
-        Columna 2: Flujo de cambio, indicando las versiones involucradas de origen y destino, no es necesario indicar versiones bug-fixes sino solo "x" para ese último dígito (Formato: d.d.x → d.d.x).
+        Columna 1: Categoría: Tipo de cambio (Ej: Cambio de afectación estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, afectación de módulo, función, clase, método, etc. Omite Bug Fixes.
+        Columna 2: Flujo de cambio, indicando las versiones involucradas de origen y destino, no es necesario indicar versiones bug-fixes sino solo "x" para ese último dígito (Formato: o.o.x → d.d.x).
         Columna 3: Resumen del escenario, con una descripción breve y concisa resumiendo los principales artefactos que sufrieron cambios (1 línea).
         Columna 4: Ejemplo de código en versión de origen, fragmento Python previo al cambio.
         Columna 5: Ejemplo de código en versión de destino, fragmento Python posterior al cambio.
         Columna 6: Grado de dificultad asociada al nivel de esfuerzo requerido de migración (Nula/Baja/Moderada/Alta).
-        Columna 7: Grado de afectación SE/QSE, en relación con Ingeniería de Software Clásica (SE) o Cuántica (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
-        Columna 8: Referencia, enlace a una fuente autoritativa de documentación, aclarando a continuación del enlace, si la fuente de referencia es "principal" o "secundaria" según las restricciones indicadas en las restricciones; por ej: "<link_fuente> (principal)" o bien "<link_fuente> (secundaria)".
+        Columna 7: Grado de afectación sobre "ing. de software clásica" (SE) / "ing. de software cuántica" (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
+        Columna 8: Referencia, enlaces a una o más fuentes autoritativas de origen de la información, celda requerida.
 
         Requisitos adicionales para la generación de la tabla:
-            1. Analiza exhaustivamente cambios en todos estos componentes de Qiskit y obtenerlos todos: 
-            QuantumCircuit, Transpiler, Primitives, Providers (IBMQ/Aer), Qiskit Terra/Aer/Ignis/Experiments, Operadores, PassManagers, Visualización.
+            1. Revisa exhaustivamente cambios en todos estos componentes Qiskit y recopilalos todos: QuantumCircuit, Transpiler, Primitives, Providers (IBMQ/Aer), Qiskit Terra/Aer/Ignis/Experiments, Operadores, PassManagers, Visualización.                
 
             2. Considera específicamente estos tipos de cambios:
                 - Deprecaciones de clases/métodos entre versiones 
@@ -45,13 +44,14 @@ def obtener_system_prompt(url_objetivo, version_objetivo):
                 - Cambios en modelos de datos (QuantumCircuit.data)
                 - Transiciones de APIs síncronas a asíncronas
 
-            3. Para cada versión objetivo indicada, en este caso: {version_objetivo}, examina todas las transiciones relevantes desde:
-                - 0.05.x → 0.06.x → ... → {version_objetivo}
-                - Entre versiones con cambios de API documentados
+            3. Para cada versión objetivo indicada: {version}, debes enunciar todas las transiciones relevantes:
+                - desde la versión base 0.05.0 y superiores, pudiendo incluir cambios como: 0.05.x → {version}, 0.06.x → {version}, etc.
+                - Siempre la versión de destino del cambio debe ser mayor o igual que la de origen.
 
             4. Prioriza la creación de filas distintas para:
                 - Cambios en diferentes sub-módulos (ej: qiskit.circuit vs qiskit.transpiler)
                 - Tipos de operación distintos (inserción vs actualización vs deprecación vs remoción vs reubicación)
+                - Considera la estructura de cambios que utiliza v{url_objetivo}
                 - Niveles de abstracción diferentes (clases base vs implementaciones específicas)
                 - Componentes afectados (librerias externas, involucra pip, backend, breaking-changes)
                 - Incluye casos paradigmáticos como: migraciones de transpilador, cambios de parámetros, reestructuracion de módulos, etc.
@@ -60,21 +60,27 @@ def obtener_system_prompt(url_objetivo, version_objetivo):
             - Respuesta en formato tabular expresada con el lenguaje de marcado "Markdown" con formato Markdown. Evita saltos de línea innecesarios en una misma fila de tabla.
             - Evitar texto externo a la tabla mísma, explicaciones extras o aclaraciones, sólo limítate a entregar una tabla resultante.
             - Los códigos python de ejemplos deben ser correctos, extraídos de fuentes especificadas, en caso de no encontrar, no indicar ninguno.
-            - Usar como referencias, hipervínculos validados y oficiales.
+            - Usar como referencias, sólo hipervínculos validados y oficiales.
+            - En el flujo de cambios (segunda columna) nunca la versión superior debe ser mayor que v{version}, pudiendo admitirse cualquiera en la versión de origen.
             - No consolidar escenarios y cambios, priorizar la abarcabildiad y extensión de escenarios.
             - Verificar la visualización correcta en formato Markdown.
             - Si para alguna celda opcional, no se dispone de información supervisada, indicarla como vacía, es decir, con valor: "".
+            - Solo se admiten celdas vacías para los ejemplos de código (4° y 5° columna).
             - Evitar escenarios hipotéticos o no documentados, pero se exhaustivo enunciando los documentados.
-            - Utiliza exclusivamente la siguiente lista de fuentes (principales y secundarias), sigue este ordenamiento para su revisión exhaustiva:
-                - Qiskit SDK realce notes (Enlace: {url_objetivo}) (principal)
-                - Qiskit Changelog (Enlace: "https://github.com/qiskit/qiskit/releases") (principal)
-                - Qiskit Leatest updates (Enlace: "https://docs.quantum.ibm.com/guides/latest-updates") (secundaria)
-                - Qiskit Migration guides (Enlace: "https://docs.quantum.ibm.com/migration-guides") (secundaria)
+            - Utiliza exclusivamente la siguiente lista de fuentes, que catalogaremos como "principales" y "secundarias", sigue este ordenamiento para su revisión exhaustiva:
+                - Qiskit SDK realce notes ({url_objetivo})
+                - Qiskit Changelog (https://github.com/qiskit/qiskit/releases/tag/{version})
+                - Qiskit Documentation tree (https://github.com/Qiskit/documentation/tree/main/docs/api/qiskit/{version_objetivo})
+                - Qiskit Leatest updates (https://docs.quantum.ibm.com/guides/latest-updates)
+                - Qiskit Migration guides (https://docs.quantum.ibm.com/migration-guides)
+                - Si el cambio tiene un enlace interno, indícalo también como una nueva línea en la columna de referencias.
+            - No generes filas a partir de ninguna migración de corrección de código del tipo: Bug Fixes.
     '''
 
-def obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content):
+def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content):
+    version = version_objetivo + ".0"
     return f'''
-        Describe exhaustivamente los escenarios de migración/refactoring en Qiskit {version_objetivo} considerando:
+        Describe exhaustivamente todos los escenarios de migración Qiskit en la versión objetivo {version} considerando:
 
         1. Componentes críticos a inspeccionar:
             - QuantumCircuit y sus métodos (compose, combine, etc)
@@ -87,13 +93,14 @@ def obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_conten
             - Qiskit-Terra vs Aer vs Experiments
 
         2. Tipos de cambios a priorizar:
-            - Deprecaciones con removal en {version_objetivo}
+            - Deprecaciones con removal en {version}
             - Cambios de API en métodos fundamentales
             - Reestructuraciones de módulos (qiskit.providers.ibmq → qiskit_ibm_provider)
             - Modificaciones en parámetros obligatorios/opcionales
             - Cambios en valores por defecto
             - Alteraciones en formatos de retorno (dict → clase específica)
             - Migración de funcionalidades a paquetes externos (qiskit-*)
+            - Instalaciones o ejecución de pip
 
         3. Directivas de análisis:
             - Examinar minuciosamente las release notes adjuntas
@@ -102,13 +109,15 @@ def obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_conten
             - Generar filas independientes por tipo de cambio aunque afecten mismo módulo
             - Incluir casos aunque no existan ejemplos de código disponibles
             - Considerar cambios en dependencias (numpy >= 1.2x, etc)
-
-        {"4. Contenido de referencia para análisis específico de versión {version_objetivo}: {file_content}" if usar_qiskit_release_notes else ""} 
+            {f"- Considera de suma relevancia la siguiente información de versión {version} para analizarla detalladamente: {file_content}" if inyectar_qiskit_release_notes else ""} 
     '''
+
+def apto_md(contenido):
+    return contenido.replace("```markdown", "", 1).rstrip("```").strip()
 
 def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature):
 
-    print(f"\n\nInvocación de OpenAI utilizando el contenido de la versión {version_objetivo} --> url: {url_objetivo} ...")
+    print(f'''\n[INFO] Invocación al modelo ...{f"\n[INFO] Flag 'usar_qiskit_release_notes' ON --> inyectando en el prompt info de versión ({version_objetivo} --> url: {url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
     headers = {
         "Content-Type": "application/json",
@@ -128,9 +137,11 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     with open(file_path, 'r', encoding='utf-8') as f:
         file_content = f.read()
 
+    # Generación de prompts del sistema y de usuario
     system_content = obtener_system_prompt(url_objetivo, version_objetivo)
-
+    #print(system_content)
     user_content = obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content)
+    #print(user_content)
 
     messages = [
         {
@@ -160,7 +171,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             temperature=payload['temperature']
         )
         
-        print(completion.choices[0].message.content)
+        # print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path))
@@ -178,18 +189,18 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             # Asumiendo que 'completion' es un objeto de OpenAI u similar
             contenido = completion.choices[0].message.content
             if contenido:
-                f.write(contenido)
-                print(f"Archivo creado exitosamente en: {path_acortado}")
+                f.write(apto_md(contenido))
+                print(f"\n[OK] Archivo creado exitosamente en: {path_acortado}")
             else:
-                print("Error: El contenido está vacío o no existe")
+                print("\n[ERROR] El contenido está vacío o no existe")
 
         if completion.choices[0].message.content:            
-            print(f"\nRespuesta desde OpenAI obtenida. Almacenada en: {path_acortado}")
+            print(f"\n[OK] Respuesta desde OpenAI obtenida. Almacenada en: {path_acortado}")
         else:
-            print("\nNo se pudo obtener una respuesta del modelo de OpenAI.")
+            print("\n[ERROR] No se pudo obtener una respuesta del modelo de OpenAI.")
 
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"\n[ERROR] {str(e)}")
         print("\nPosibles soluciones:")
         print("1. Verifica que el servidor está corriendo y accesible")
         print("2. Confirma que la URL incluye el puerto y ruta correctos")

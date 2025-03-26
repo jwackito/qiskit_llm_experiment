@@ -2,6 +2,7 @@ import os, argparse, requests
 from bs4 import BeautifulSoup
 from peticion_openai import invoke_openai
 from verificacion import verificar_documentacion
+from dotenv import load_dotenv
 
 def clean_content(soup):
 
@@ -68,26 +69,31 @@ def extract_main_content(url):
     
     return text
 
+def bool_conv(valor):
+    return valor.strip().lower() == "true"
+
 if __name__ == "__main__":
+
+    # Carga las variables del archivo .env
+    load_dotenv()
 
     # Configurar el parser de argumentos
     parser = argparse.ArgumentParser(description="Extracción de documentación oficial Qiskit")
-    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="0.7")
-    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=False)
-    parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default="scraped_content")
-    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
-    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
+    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default=os.getenv("DEFAULT_VERSION"))
+    parser.add_argument("--inyecta_info_qrn", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=bool_conv(os.getenv("INYECTA_INFO_QRN", False)))
+    parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("SCRAP_DIRECTORY"))
+    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("URL_OPENAI_SERVER_ENDPOINT"))
+    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("OPENAI_API_KEY"))
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
-    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=True)
-    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default="")
-    parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=0)
-    parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
+    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=bool_conv(os.getenv("REMOTE_INVOKE", False)))
+    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default=os.getenv("MODEL"))
+    parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
+    parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=bool_conv(os.getenv("EJECUTAR_ETAPA_VERIFICACION", False)))
 
     args = parser.parse_args()
-    
+
     # Construir la URL usando la versión proporcionada
     url_qiskit_release_notes = f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{args.version}"
-    parser.set_defaults(scraped_content_path="scraped_content")
     
     content = extract_main_content(url_qiskit_release_notes)
     
@@ -113,7 +119,7 @@ if __name__ == "__main__":
                 url_objetivo = url_qiskit_release_notes, 
                 url_openai_server_endpoint = args.url_openai_server_endpoint, 
                 openai_api_key = args.openai_api_key, 
-                usar_qiskit_release_notes = args.usa_qiskit_release_notes, 
+                usar_qiskit_release_notes = args.inyecta_info_qrn, 
                 model_answers_path = args.model_answers_path, 
                 model = args.model,
                 temperature = args.temperature
