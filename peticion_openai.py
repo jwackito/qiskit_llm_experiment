@@ -171,7 +171,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             temperature=payload['temperature']
         )
         
-        # print(completion.choices[0].message.content)
+        #print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path))
@@ -179,8 +179,13 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             os.makedirs(llm_answers_dir, exist_ok=True)
         
         # Guardar el contenido en un archivo dentro de la carpeta configurada (default = "/llm_answers")
-        fecha_hora = datetime.now().strftime("%d_%m_%Y-%H_%M_%S")
-        file_name = f"{payload['model'].split("/")[1]}_v{version_objetivo.replace('.', '_')}-{fecha_hora}.md"
+        fecha_hora = datetime.now().strftime("%d_%m_%Y-%H_%M")
+        modelo_base = (
+            payload['model'].split('/', 1)[1] 
+            if '/' in payload['model'] 
+            else payload['model']
+        )
+        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}.md"
 
         file_answer_path = os.path.join(llm_answers_dir, file_name)
         path_acortado = obtener_ultimas_dos_secciones(file_answer_path)
