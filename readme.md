@@ -23,4 +23,6 @@ python ./scrap.py --version "0.46" --invoke_openai true --url_openai_server_endp
 | 1.4.x | pequeño | 141 | 104 | 27 | 13.6 | 0 | alta |  |
 
 
-![Líneas de documentación en notas de liberación](/imagenes/grafico_version_cant_lineas.png)
+<img 
+	src="./imagenes/grafico_version_cant_lineas.png" width="50%" 
+	alt="Líneas de documentación en notas de liberación según versión Qiskit">

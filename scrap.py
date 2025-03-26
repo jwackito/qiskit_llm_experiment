@@ -72,14 +72,14 @@ if __name__ == "__main__":
 
     # Configurar el parser de argumentos
     parser = argparse.ArgumentParser(description="Extracción de documentación oficial Qiskit")
-    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="0.46")
-    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=True)
+    parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default="0.7")
+    parser.add_argument("--usa_qiskit_release_notes", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=False)
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default="scraped_content")
-    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="http://dominio.com:puerto/subdominio")
-    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="api-key")
+    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
+    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default="")
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
-    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=False)
-    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default="lmstudio-community/gemma-3-27b-it-GGUF")
+    parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=True)
+    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default="")
     parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=0)
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=False)
 
