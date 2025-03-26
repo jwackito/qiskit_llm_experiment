@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("SCRAP_DIRECTORY"))
     parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("URL_OPENAI_SERVER_ENDPOINT"))
     parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("OPENAI_API_KEY"))
-    parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default="llm_answers")
+    parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default=os.getenv("MODEL_OUTPUT_DIRECTORY"))
     parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=bool_conv(os.getenv("REMOTE_INVOKE", False)))
     parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default=os.getenv("MODEL"))
     parser.add_argument("--temperature", type=int, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
@@ -102,16 +102,16 @@ if __name__ == "__main__":
         # Crear la carpeta "scrapped_content" si no existe
         downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
         if not os.path.exists(downloads_dir):
-            print(f"Creando el directorio ... {downloads_dir}")
+            print(f"\n [INFO] Creando el directorio ... {downloads_dir}")
             os.makedirs(downloads_dir)
         
         # Guardar el contenido en un archivo dentro de la carpeta "scrapped_content"
         file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
-        print(f"Sobreescribiendo el contenido de {file_path} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
+        print(f"\n[INFO] Sobreescribiendo el contenido de {file_path} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print(f"Contenido obtenido desde {url_qiskit_release_notes} guardado en: {file_path}")
+        print(f"\n[OK] Contenido obtenido desde {url_qiskit_release_notes} guardado en: {file_path}")
 
         if args.invoke_openai:
             openai_response = invoke_openai(

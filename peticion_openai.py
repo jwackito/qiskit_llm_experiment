@@ -117,7 +117,7 @@ def apto_md(contenido):
 
 def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature):
 
-    print(f'''\n[INFO] Invocación al modelo ...{f"\n[INFO] Flag 'usar_qiskit_release_notes' ON --> inyectando en el prompt info de versión ({version_objetivo} --> url: {url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
+    print(f'''\n[INFO] Invocación al modelo ...{f"\n[INFO] Flag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit rrnn ({url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
     headers = {
         "Content-Type": "application/json",
