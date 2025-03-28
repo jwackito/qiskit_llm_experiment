@@ -121,7 +121,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer lm-studio"
+        "Authorization": f"Bearer {openai_api_key}"
     }
 
     # Ruta al archivo generado por el script previo
@@ -137,11 +137,9 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     with open(file_path, 'r', encoding='utf-8') as f:
         file_content = f.read()
 
-    # Generación de prompts del sistema y de usuario
+    # Generación de prompts
     system_content = obtener_system_prompt(url_objetivo, version_objetivo)
-    #print(system_content)
     user_content = obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content)
-    #print(user_content)
 
     messages = [
         {
@@ -157,21 +155,27 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     payload = {
         "model": model,
         "messages": messages,
-        "temperature": temperature
+        "temperature": temperature,
+        "max_tokens": 2048,
+        "stream": False
     }
 
     try:
+        
         client = OpenAI(
             base_url=url_openai_server_endpoint, 
             api_key=openai_api_key
         )
+
         completion = client.chat.completions.create(
             model=payload['model'], 
             messages=payload['messages'], 
-            temperature=payload['temperature']
+            temperature=payload['temperature'],
+            max_tokens=payload['max_tokens'],
+            stream=payload['stream']
         )
         
-        #print(completion.choices[0].message.content)
+        print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path))
