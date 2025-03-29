@@ -1,0 +1,95 @@
+Resumen de casos de migración únicos en cada tabla:
+Tabla 1 (deepseek-chat_v0_30_29_03_2025-18_36.md) - Casos no presentes en la Tabla 2:
+Reestructuración de módulos (qiskit.providers.ibmq → qiskit_ibm_provider)
+
+Migración de IBMQ a IBMProvider.
+
+Dificultad: Moderada | Afectación: QSE (inicialización de backends).
+
+Deprecación de métodos (u3 → rz y sx)
+
+Reemplazo de compuertas base en circuitos.
+
+Dificultad: Baja | Afectación: QSE (compuertas base).
+
+Cambio en valores por defecto (NoiseModel con ["id", "rz", "sx", "cx"])
+
+Actualización de basis gates en modelos de ruido.
+
+Dificultad: Baja | Afectación: QSE (configuración de ruido).
+
+Modificación en retorno (AerSimulator.run() retorna AerJobSet)
+
+Nuevo manejo de jobs asíncronos con max_job_size.
+
+Dificultad: Alta | Afectación: SE (API de ejecución).
+
+Actualización de dependencias (numpy >= 1.20)
+
+Requerimiento mínimo actualizado.
+
+Dificultad: Nula | Afectación: SE (gestión de dependencias).
+
+Cambio en API de visualización (plot_error_map usa sx)
+
+Actualización en visualización de errores.
+
+Dificultad: Baja | Afectación: QSE (visualización).
+
+Migración a paquetes externos (funcionalidades de Aqua)
+
+Movimiento de algoritmos a qiskit-nature, qiskit-finance, etc.
+
+Dificultad: Alta | Afectación: QSE (reorganización).
+
+Cambio en serialización (deprecación de Qobj)
+
+Uso de circuitos transpilados en lugar de Qobj.
+
+Dificultad: Moderada | Afectación: SE (flujo de ejecución).
+
+Tabla 2 (deepseek-chat_v0_30_29_03_2025-19_07.md) - Casos no presentes en la Tabla 1:
+Nuevo parámetro parameter_binds en run
+
+Soporte para enlazar parámetros en simulaciones.
+
+Dificultad: Baja | Afectación: QSE (nueva funcionalidad).
+
+Deprecación de method='GPU' → device='GPU'
+
+Cambio en configuración de simuladores de estado.
+
+Dificultad: Baja | Afectación: SE (configuración).
+
+Integración con Dask para ejecución paralela
+
+Soporte para HPC con executor=dask_client.
+
+Dificultad: Alta | Afectación: SE (integración).
+
+Ampliación de API en PulseSimulator.run()
+
+Acepta QuantumCircuit además de Schedule.
+
+Dificultad: Moderada | Afectación: QSE (API).
+
+Deprecación de SaveExpectationValue
+
+Reemplazo por SaveExpectationValueVariance.
+
+Dificultad: Alta | Afectación: QSE (funcionalidad).
+
+Corrección en max_parallel_experiments
+
+Valor 1 ya no se trata como 0.
+
+Dificultad: Baja | Afectación: SE (comportamiento).
+
+Soporte para PauliGate en simuladores Aer
+
+Uso directo de compuertas Pauli en circuitos.
+
+Dificultad: Moderada | Afectación: QSE (nueva compuerta).
+
+Conclusión:
+Las tablas comparten algunos casos (como cambios en NoiseModel y backend_options), pero cada una incluye escenarios únicos. La Tabla 1 se enfoca más en migraciones estructurales (ej. módulos, serialización), mientras que la Tabla 2 destaca nuevas funcionalidades (ej. Dask, PauliGate) y ajustes en APIs existentes.

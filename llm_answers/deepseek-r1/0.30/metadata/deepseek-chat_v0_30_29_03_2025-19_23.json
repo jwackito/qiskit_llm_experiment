@@ -1,0 +1,28 @@
+{
+  "id": "b50c4763-4ec9-4e59-a53a-f5e5678d4695",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Categoría | Flujo de cambio | Resumen del escenario | Ejemplo de código (origen) | Ejemplo de código (destino) | Dificultad | Afectación (SE/QSE) | Referencia |\n|-----------|-----------------|-----------------------|---------------------------|----------------------------|------------|----------------------|------------|\n| Cambio de afectación estructural | 0.18.x → 0.30.0 | Migración de `qiskit.providers.ibmq` a `qiskit_ibm_provider`. | `from qiskit.providers.ibmq import IBMQ` | `from qiskit_ibm_provider import IBMProvider` | Moderada | QSE (Cambio en inicialización de backends) | [Qiskit 0.30 Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Deprecación de métodos | 0.18.x → 0.30.0 | Deprecación de `u3` en favor de `rz` y `sx`. | `circuit.u3(theta, phi, lambda, qubit)` | `circuit.rz(phi, qubit); circuit.sx(qubit)` | Baja | QSE (Reemplazo de compuertas base) | [Qiskit 0.30 Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Modificación de parámetros | 0.18.x → 0.30.0 | Cambio en `basis_gates` por defecto en `NoiseModel`. | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | Baja | QSE (Configuración de ruido) | [Qiskit Aer 0.9.0 Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Reestructuración de módulos | 0.18.x → 0.30.0 | Movimiento de `qiskit.providers.aer.extensions` a `qiskit.providers.aer.library`. | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | Moderada | QSE (Serialización de estados) | [Aer 0.9.0 Changelog](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Cambio en mecanismos de ejecución | 0.18.x → 0.30.0 | Adición de `parameter_binds` en `AerSimulator.run()`. | `backend.run(circuit, shots=1000)` | `backend.run(circuit, shots=1000, parameter_binds=[{theta: [0, 1.57]}])` | Baja | QSE (Parámetros dinámicos) | [Aer 0.9.0 Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Deprecación de funcionalidad | 0.18.x → 0.30.0 | Deprecación de `backend_options` en `AerSimulator.run()`. | `backend.run(circuit, backend_options={...})` | `backend.run(circuit, noise_model=noise_model)` | Baja | SE (Configuración de backends) | [Aer 0.9.0 Upgrade Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Cambio en dependencias | 0.18.x → 0.30.0 | Requerimiento de `numpy>=1.20`. | `import numpy as np` (v1.19) | `import numpy as np` (v1.20+) | Nula | SE (Compatibilidad numérica) | [Qiskit Terra 0.18.3 Changelog](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.3) |\n| Modificación en visualización | 0.18.x → 0.30.0 | Actualización de `plot_error_map` para usar `sx` en lugar de `u2`. | `plot_error_map(backend, figsize=(10, 6))` | `plot_error_map(backend, figsize=(10, 6))` (actualizado internamente) | Nula | QSE (Visualización de errores) | [Terra 0.18.3 Bug Fixes](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.3) |\n| Cambio en modelos de datos | 0.18.x → 0.30.0 | Soporte para `PauliGate` en `AerSimulator`. | `circuit.append(PauliGate('XYZ'), [0, 1, 2])` (sin soporte) | `circuit.append(PauliGate('XYZ'), [0, 1, 2])` (soportado) | Baja | QSE (Operadores personalizados) | [Aer 0.9.0 New Features](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30) |\n| Migración de funciones | 0.18.x → 0.30.0 | Movimiento de `qiskit.compiler.assemble` a `qiskit.execute_function`. | `from qiskit.compiler import assemble` | `from qiskit import execute` | Moderada | SE (Flujo de ejecución) | [Terra 0.18.3 Deprecations](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.3) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743286980,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1341,
+    "prompt_tokens": 4389,
+    "total_tokens": 5730,
+    "prompt_tokens_details": {
+      "cached_tokens": 4352
+    },
+    "prompt_cache_hit_tokens": 4352,
+    "prompt_cache_miss_tokens": 37
+  }
+}

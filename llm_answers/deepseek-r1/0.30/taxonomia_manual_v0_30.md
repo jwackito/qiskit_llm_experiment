@@ -1,0 +1,11 @@
+
+
+| Categoría | Versión | Cambio | pip | Resumen | Ej. de código en versión origen | Ej. de código en versión destino | Dificultad | Ambito | Referencia |
+| :---- | ----- | :---- | ----- | :---- | :---- | :---- | :---- | :---- | :---- |
+| Incremento Q-Aer Primitivas  | 0.29 → 0.30 | Compuertas añadidas a la librería de Backends Simulators de Aer: **SXdgGate** y **CUGate**  |  |  |  |  | Baja | QSE |  |
+| Incremento Q-Aer Primitivas  | 0.29 → 0.30 | Soporte para compuertas de Pauli de n quibits. Módulo: qiskit.circuit.library.generalized\_gatesClase: **PauliGate** |  |  |  |  | Baja | QSE |  |
+| Incremento Q-Aer Semántico  | 0.29 → 0.30 | Métpdp run() con nuevo karg **parameter\_binds**  Clases:**AerSimulator, StatevectorSimulaor y UnitarySimulator** |  |  |  | . . . generate circuit . . . parameter\_binds \= \[{theta: \[0, 3.14, 6.28\]}\] backend.run(circuit, shots=shots, **parameter\_binds=parameter\_binds**).result()  | Baja | QSE |  |
+| Incremento Q-Aer Estructural Usabilidad  | 0.29 → 0.30 | La gestión de circuitos está ahora encapsulada por el PulseSimulator. El método run() acepta ahora directamente una lista de circuitos. |  |  |  | ... **from qiskit.providers.aer.backends import PulseSimulator**   backend \= PulseSimulator.from\_backend(FakeVigo()) circuit \= QuantumCircuit(2) ... transpiled\_circuit \= transpile(circuit, backend) backend.run(circuit) | Baja | SE |  |
+| Actualizacion Q-Aer Primitivas  | 0.29 → 0.30 | Clase: NoiseModelCambio de compuertas base desde \[“id”, “u3”, “cx”\] → \[“id”, “rz”, “sx”, “cx”\].Asociado a deprecaciones de u3 en **qiski-terra** y **qiskit-ibmq-provider**. |  |  |  |  | Baja | QSE |  |
+| Deprecación Q-Aer  | 0.29 → 0.30 | Se deprecó:El pasaje directo del objeto qobj directamente al método run() de backends de simulación Aer. Instantáneas en qiskit.providers.aer.extensions Incorporación de error por ruido no local directamente sobre el circuito. El uso del parámetro **method** en **StatevectorSimulator** y **UnitarySimulator**, para simular una corrida sobre GPU.  |  |  |  |  backend.run(circuits, \*\*run\_options) qiskit.providers.aer.library device=”GPU” | Baja | QSE |  |
+|

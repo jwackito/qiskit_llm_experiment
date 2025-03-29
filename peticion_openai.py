@@ -1,4 +1,4 @@
-import os
+import os, json
 from openai import OpenAI
 from datetime import datetime
 
@@ -115,6 +115,19 @@ def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_co
 def apto_md(contenido):
     return contenido.replace("```markdown", "", 1).rstrip("```").strip()
 
+def guardar_metadata_completion(completion, path, filename):
+
+    path_metadata = os.path.join(path, "metadata")
+    file_metadata_path = os.path.join(path_metadata, filename + ".json")
+
+    if not os.path.exists(path_metadata):
+        os.makedirs(path_metadata, exist_ok=True)
+
+    with open(file_metadata_path, 'w', encoding='utf-8') as f:
+        # Asumiendo que 'completion' es un objeto de OpenAI u similar
+        json.dump(completion.to_dict(), f, indent=2, ensure_ascii=False)
+        print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
+
 def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature):
 
     print(f'''\n[INFO] Invocación al modelo ...{f"\n[INFO] Flag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit rrnn ({url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
@@ -178,10 +191,10 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
         print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
-        llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path))
+        llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path + f"/{version_objetivo}"))
         if not os.path.exists(llm_answers_dir):
             os.makedirs(llm_answers_dir, exist_ok=True)
-        
+
         # Guardar el contenido en un archivo dentro de la carpeta configurada (default = "/llm_answers")
         fecha_hora = datetime.now().strftime("%d_%m_%Y-%H_%M")
         modelo_base = (
@@ -189,9 +202,13 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             if '/' in payload['model'] 
             else payload['model']
         )
-        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}.md"
 
-        file_answer_path = os.path.join(llm_answers_dir, file_name)
+        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}"
+
+        guardar_metadata_completion(completion, llm_answers_dir, file_name)
+
+        # Guarda el contenido de la respuesta
+        file_answer_path = os.path.join(llm_answers_dir, file_name + ".md")
         path_acortado = obtener_ultimas_dos_secciones(file_answer_path)
 
         with open(file_answer_path, 'w', encoding='utf-8') as f:
