@@ -20,13 +20,13 @@ def obtener_system_prompt(url_objetivo, version_objetivo):
     version = version_objetivo + ".0"
     return f'''
         Obten una respuesta con formato tabular que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
-        Columna 1: Categoría: Tipo de cambio (Ej: Cambio de afectación estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, afectación de módulo, función, clase, método, etc. Omite Bug Fixes.
+        Columna 1: Categoría: Tipo de cambio (Ej: cambio estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, breve descripción de módulo, función, clase, método, o artefacto implicado. Omite Bug Fixes.
         Columna 2: Flujo de cambio, indicando las versiones involucradas de origen y destino, no es necesario indicar versiones bug-fixes sino solo "x" para ese último dígito (Formato: o.o.x → d.d.x).
         Columna 3: Resumen del escenario, con una descripción breve y concisa resumiendo los principales artefactos que sufrieron cambios (1 línea).
         Columna 4: Ejemplo de código en versión de origen, fragmento Python previo al cambio.
         Columna 5: Ejemplo de código en versión de destino, fragmento Python posterior al cambio.
-        Columna 6: Grado de dificultad asociada al nivel de esfuerzo requerido de migración (Nula/Baja/Moderada/Alta).
-        Columna 7: Grado de afectación sobre "ing. de software clásica" (SE) / "ing. de software cuántica" (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
+        Columna 6: Grado de dificultad asociada al nivel de esfuerzo requerido de migración ("Nula" si no afecta al código vs "Baja" si reviste poca dificultad de migración vs "Moderada" si requiere múltiples cambios de adaptación vs "Alta" si es un cambio disruptivo y afecta la API), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
+        Columna 7: Grado de afectación sobre "ing. de software clásica" (SE) vs "ing. de software cuántica" (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
         Columna 8: Referencia, enlaces a una o más fuentes autoritativas de origen de la información, celda requerida.
 
         Requisitos adicionales para la generación de la tabla:
@@ -67,13 +67,13 @@ def obtener_system_prompt(url_objetivo, version_objetivo):
             - Si para alguna celda opcional, no se dispone de información supervisada, indicarla como vacía, es decir, con valor: "".
             - Solo se admiten celdas vacías para los ejemplos de código (4° y 5° columna).
             - Evitar escenarios hipotéticos o no documentados, pero se exhaustivo enunciando los documentados.
-            - Utiliza exclusivamente la siguiente lista de fuentes, que catalogaremos como "principales" y "secundarias", sigue este ordenamiento para su revisión exhaustiva:
-                - Qiskit SDK realce notes ({url_objetivo})
-                - Qiskit Changelog (https://github.com/qiskit/qiskit/releases/tag/{version})
-                - Qiskit Documentation tree (https://github.com/Qiskit/documentation/tree/main/docs/api/qiskit/{version_objetivo})
-                - Qiskit Leatest updates (https://docs.quantum.ibm.com/guides/latest-updates)
-                - Qiskit Migration guides (https://docs.quantum.ibm.com/migration-guides)
-                - Si el cambio tiene un enlace interno, indícalo también como una nueva línea en la columna de referencias.
+            - Utiliza la siguiente lista de fuentes en este ordenamiento para su revisión exhaustiva:
+                - Qiskit SDK realce notes ({url_objetivo}) (principal)
+                - Qiskit Changelog (https://github.com/qiskit/qiskit/releases/tag/{version}) (principal)
+                - Qiskit Documentation tree (https://github.com/Qiskit/documentation/tree/main/docs/api/qiskit/{version_objetivo}) (secundaria)
+                - Qiskit Leatest updates (https://docs.quantum.ibm.com/guides/latest-updates) (secundaria)
+                - Qiskit Migration guides (https://docs.quantum.ibm.com/migration-guides) (secundaria)
+                - Si el cambio tiene un enlace interno, indícalo también como una nueva línea en la columna de referencias, entre paréntesis indicar el tipo de fuente ("principal" vs "secundaria").
             - No generes filas a partir de ninguna migración de corrección de código del tipo: Bug Fixes.
     '''
 
@@ -115,7 +115,7 @@ def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_co
 def apto_md(contenido):
     return contenido.replace("```markdown", "", 1).rstrip("```").strip()
 
-def guardar_metadata_completion(completion, path, filename):
+def guardar_metadata_completion(completion, path, filename, payload):
 
     path_metadata = os.path.join(path, "metadata")
     file_metadata_path = os.path.join(path_metadata, filename + ".json")
@@ -125,12 +125,19 @@ def guardar_metadata_completion(completion, path, filename):
 
     with open(file_metadata_path, 'w', encoding='utf-8') as f:
         # Asumiendo que 'completion' es un objeto de OpenAI u similar
-        json.dump(completion.to_dict(), f, indent=2, ensure_ascii=False)
+        completion_dict = completion.to_dict()
+
+        # Añado la info de la solicitud
+        completion_dict["temperature"] = payload['temperature']
+        completion_dict["max_tokens"] = payload['max_tokens']
+        completion_dict["stream"] = payload['stream']
+
+        json.dump(completion_dict, f, indent=2, ensure_ascii=False)
         print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
 
 def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature):
 
-    print(f'''\n[INFO] Invocación al modelo ...{f"\n[INFO] Flag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit rrnn ({url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
+    print(f'''\n[INFO] Invocación al modelo {model} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit rrnn ({url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
     headers = {
         "Content-Type": "application/json",
@@ -205,7 +212,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
 
         file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}"
 
-        guardar_metadata_completion(completion, llm_answers_dir, file_name)
+        guardar_metadata_completion(completion, llm_answers_dir, file_name, payload)
 
         # Guarda el contenido de la respuesta
         file_answer_path = os.path.join(llm_answers_dir, file_name + ".md")
@@ -221,9 +228,9 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
                 print("\n[ERROR] El contenido está vacío o no existe")
 
         if completion.choices[0].message.content:            
-            print(f"\n[OK] Respuesta desde OpenAI obtenida. Almacenada en: {path_acortado}")
+            print(f"\n[OK] Respuesta desde OpenAI obtenida. Almacenada en: {path_acortado}\n")
         else:
-            print("\n[ERROR] No se pudo obtener una respuesta del modelo de OpenAI.")
+            print("\n[ERROR] No se pudo obtener una respuesta del modelo de OpenAI.\n")
 
     except Exception as e:
         print(f"\n[ERROR] {str(e)}")

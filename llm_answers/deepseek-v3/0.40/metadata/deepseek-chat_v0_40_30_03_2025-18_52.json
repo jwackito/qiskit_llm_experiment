@@ -1,0 +1,31 @@
+{
+  "id": "82534517-cf9c-4a8a-ada2-8fd10a4d2159",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Categoría | Flujo de cambio | Resumen del escenario | Ejemplo de código en versión de origen | Ejemplo de código en versión de destino | Grado de dificultad | Grado de afectación | Referencia |\n|-----------|-----------------|-----------------------|---------------------------------------|----------------------------------------|---------------------|---------------------|------------|\n| Reestructuración de paquetes | 0.05.x → 0.40.0 | Migración de qiskit.providers.ibmq a qiskit_ibm_provider | `from qiskit.providers.ibmq import IBMQ` | `from qiskit_ibm_provider import IBMQ` | Alta (Cambio disruptivo en importaciones) | QSE (Requiere actualización de dependencias) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Deprecación de métodos | 0.16.x → 0.40.0 | Eliminación de QuantumCircuit.u1, u2, u3 y sus variantes controladas | `qc.u1(0.5, 0)` | `qc.p(0.5, 0)` | Moderada (Reemplazo directo pero amplio) | QSE (Cambios en circuitos existentes) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Cambio en parámetros | 0.23.x → 0.40.0 | Pulso GaussianSquare ahora requiere amp y angle en lugar de amp complejo | `GaussianSquare(duration=100, sigma=20, amp=0.5j)` | `GaussianSquare(duration=100, sigma=20, amp=0.5, angle=np.pi/2)` | Moderada (Cambio en firmas de métodos) | QSE (Afecta calibración de pulsos) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Migración de funcionalidad | 0.21.x → 0.40.0 | Reemplazo de LinearFunctionsSynthesis por HighLevelSynthesis | `pass_manager.append(LinearFunctionsSynthesis())` | `pass_manager.append(HighLevelSynthesis(HLSConfig(linear_function=[(\"default\", {})]))` | Baja (Reemplazo con configuración adicional) | QSE (Transpiler) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Cambio en dependencias | 0.23.x → 0.40.0 | Python 3.7 dejó de ser soportado | \"\" | \"\" | Baja (Actualización de entorno) | SE (Requiere Python ≥3.8) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Modificación en serialización | 0.23.x → 0.40.0 | QPY versión 6 introduce ScalableSymbolicPulse | \"\" | \"\" | Baja (Cambio interno) | SE (Compatibilidad con QPY) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Actualización de valores por defecto | 0.23.x → 0.40.0 | SabreLayout ahora aplica routing por defecto | `SabreLayout(coupling_map)` | `SabreLayout(coupling_map, skip_routing=False)` | Baja (Comportamiento opcional explícito) | QSE (Transpiler) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Deprecación de visualización | 0.21.x → 0.40.0 | Pulse drawer legacy (pulse_v1) obsoleto | `pulse_drawer(schedule, style='legacy')` | `pulse_drawer(schedule, style='iqx')` | Baja (Migración a pulse_v2) | SE (Visualización) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n| Cambio en formato de retorno | 0.23.x → 0.40.0 | QuasiDistribution filtra estados con probabilidad cero | `{'000': 0.0, '001': 0.5, ...}` | `{'001': 0.5}` | Nula (Mejora interna) | QSE (Post-procesamiento) | [Qiskit 0.40 release notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.40) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743371494,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1137,
+    "prompt_tokens": 20259,
+    "total_tokens": 21396,
+    "prompt_tokens_details": {
+      "cached_tokens": 20160
+    },
+    "prompt_cache_hit_tokens": 20160,
+    "prompt_cache_miss_tokens": 99
+  },
+  "temperature": 0.1,
+  "max_tokens": 2048,
+  "stream": false
+}

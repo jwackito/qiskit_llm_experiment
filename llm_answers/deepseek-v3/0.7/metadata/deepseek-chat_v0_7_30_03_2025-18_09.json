@@ -1,0 +1,28 @@
+{
+  "id": "47720805-d89c-40bd-9014-ba6ce4f047b9",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Categoría | Flujo de cambio | Resumen del escenario | Ejemplo código origen | Ejemplo código destino | Grado dificultad | Afectación (SE/QSE) | Referencia |\n|-----------|-----------------|-----------------------|-----------------------|------------------------|------------------|---------------------|------------|\n| Cambio estructural (visualización) | 0.6.x → 0.7.x | Migración de funciones de visualización a métodos específicos (`plot_state()` → `plot_state_city()`, etc). | `plot_state(rho, method='city')` | `plot_state_city(rho)` | Moderada (requiere reemplazo múltiple de funciones) | QSE (afecta visualización de estados cuánticos) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Deprecación (serialización) | 0.6.x → 0.7.x | Reemplazo de `get_data()` por `data()` en objetos `Result`, con cambio en formato de retorno. | `result.get_data()['unitary']` | `result.data()['unitary']` (o `get_unitary()`) | Alta (cambio en estructura de datos y métodos) | QSE (afecta post-procesamiento de resultados) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Reestructuración (módulos) | 0.6.x → 0.7.x | Separación de simuladores: `Aer` (nuevo), `BasicAer` (Python), `LegacySimulators` (C++). | `from qiskit import Aer` | `from qiskit import BasicAer` (o `qiskit-aer` para Aer) | Moderada (requiere ajuste de imports) | SE/QSE (configuración de backends) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Cambio API (transpiler) | 0.6.x → 0.7.x | `transpile()` ahora recibe/retorna `QuantumCircuit` en lugar de DAG. | `transpile_dag(circuit)` | `transpile(circuit)` | Baja (adaptación simple) | QSE (flujo de transpilación) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Deprecación (circuitos) | 0.6.x → 0.7.x | Reemplazo de `load_qasm_file()` por `QuantumCircuit.from_qasm_file()`. | `load_qasm_file('file.qasm')` | `QuantumCircuit.from_qasm_file('file.qasm')` | Baja (sustitución directa) | QSE (construcción de circuitos) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Cambio configuración (visualización) | 0.6.x → 0.7.x | Dependencias de visualización (matplotlib) ahora opcionales (`pip install qiskit-terra[visualization]`). | `import qiskit.tools.visualization` | `pip install qiskit-terra[visualization]` + import | Baja (requiere instalación adicional) | SE (gestión de dependencias) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Cambio comportamiento (backends) | 0.6.x → 0.7.x | `backend.jobs()` ya no retorna resultados directamente, requiere `job.result()`. | `backend.jobs()[0]` | `backend.jobs()[0].result()` | Moderada (cambio en flujo de trabajo) | QSE (manejo de jobs) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Deprecación (visualización) | 0.6.x → 0.7.x | Unificación de funciones de dibujo de circuitos en `circuit_drawer()`. | `latex_circuit_drawer(circuit)` | `circuit_drawer(circuit, output='latex')` | Baja (cambio de parámetros) | QSE (visualización de circuitos) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Cambio en valores por defecto (visualización) | 0.6.x → 0.7.x | `plot_histogram()` ahora retorna objeto `Figure` en lugar de mostrar directamente. | `plot_histogram(counts)` | `plot_histogram(counts).show()` | Baja (ajuste en llamadas) | QSE (visualización interactiva) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n| Remoción (API backends) | 0.6.x → 0.7.x | Eliminación de `register()` y `available_backends()`. | `register(provider)` | Uso de `IBMProvider` directamente | Moderada (migración a nuevo sistema) | SE (gestión de proveedores) | [Release Notes 0.7](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.7) (principal) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743368932,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1328,
+    "prompt_tokens": 5699,
+    "total_tokens": 7027,
+    "prompt_tokens_details": {
+      "cached_tokens": 1216
+    },
+    "prompt_cache_hit_tokens": 1216,
+    "prompt_cache_miss_tokens": 4483
+  }
+}

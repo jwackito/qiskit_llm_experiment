@@ -1,0 +1,7 @@
+En esta versión intenté jugar con el ordenamiento de la tabla ...
+Ingresando la descripción tanto en el prompt del sistema como de usuario sin éxito y además descubriendo que tiende a recortar la información, al ingresarlo en el del usuario conservó mejor el orden.
+
+Al ingresar el ordenamiento retorna 9 filas, y si se lo saco del prompt, 18.
+
+ - Ej: 
+ 	- "Ordenamiento de información de la tabla, por esta columna ("Alta" -> "Moderada" -> "Baja" -> "Nula")"
