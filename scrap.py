@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from peticion_openai import invoke_openai
 from verificacion import verificar_documentacion
 from dotenv import load_dotenv
+from utils import obtener_ultimas_dos_secciones
 
 def clean_content(soup):
 
@@ -107,11 +108,11 @@ if __name__ == "__main__":
         
         # Guardar el contenido en un archivo dentro de la carpeta "scrapped_content"
         file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
-        print(f"\n[INFO] Sobreescribiendo el contenido de {file_path} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
+        print(f"\n[INFO] Sobreescribiendo el contenido de {obtener_ultimas_dos_secciones(file_path)} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print(f"\n[OK] Contenido obtenido desde {url_qiskit_release_notes} guardado en: {file_path}")
+        print(f"\n[OK] Contenido obtenido desde {url_qiskit_release_notes} guardado en: {obtener_ultimas_dos_secciones(file_path)}")
 
         if args.invoke_openai:
             openai_response = invoke_openai(

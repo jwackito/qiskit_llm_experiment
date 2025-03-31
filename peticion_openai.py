@@ -1,20 +1,7 @@
 import os, json
 from openai import OpenAI
 from datetime import datetime
-
-def obtener_ultimas_dos_secciones(ruta):
-    # Normalizar la ruta para asegurar separadores consistentes
-    ruta_normalizada = os.path.normpath(ruta)
-    
-    # Dividir la ruta en sus componentes
-    partes = ruta_normalizada.split(os.sep)
-    
-    # Filtrar elementos vacíos y tomar los últimos dos
-    partes_no_vacias = [p for p in partes if p]
-    ultimas_dos = partes_no_vacias[-2:] if len(partes_no_vacias) >= 2 else partes_no_vacias
-    
-    # Reconstruir la subruta con el separador original
-    return os.sep.join(ultimas_dos)
+from utils import obtener_ultimas_dos_secciones
 
 def obtener_system_prompt(url_objetivo, version_objetivo):
     version = version_objetivo + ".0"

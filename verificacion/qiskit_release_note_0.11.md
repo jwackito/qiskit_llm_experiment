@@ -42,9 +42,9 @@ The IBMQProvider has been updated in order to default to use the new IBM Q Exper
 Updating to the new IBM Q Experience v2
 If you have credentials for the legacy IBM Q Experience stored on disk, you can make use of the interactive helper:
 
-**_josemanuelsuarez_**
-from qiskit import IBMQ
 
+from qiskit import IBMQ
+ 
 IBMQ.update_account()
 For more complex cases or fine tuning your configuration, the following methods are available:
 
@@ -55,8 +55,9 @@ When using the new IBM Q Experience v2 through the provider, access to backends 
 
 You can get a reference to the providers that you have access to using the IBMQ.providers() and IBMQ.get_provider() methods:
 
-from qiskit import IBMQ
 
+from qiskit import IBMQ
+ 
 provider = IBMQ.load_account()
 my_providers = IBMQ.providers()
 provider_2 = IBMQ.get_provider(hub='A', group='B', project='C')
@@ -64,15 +65,17 @@ For convenience, IBMQ.load_account() and IBMQ.enable_account() will return a pro
 
 For example, the following program in previous versions:
 
-from qiskit import IBMQ
 
+from qiskit import IBMQ
+ 
 IBMQ.load_accounts()
 backend = IBMQ.get_backend('ibmqx4')
 backend_2 = IBMQ.get_backend('ibmq_qasm_simulator', hub='HUB2')
 Would be equivalent to the following program in the current version:
 
-from qiskit import IBMQ
 
+from qiskit import IBMQ
+ 
 provider = IBMQ.load_account()
 backend = provider.get_backend('ibmqx4')
 provider_2 = IBMQ.get_provider(hub='HUB2')
