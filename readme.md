@@ -16,6 +16,10 @@ Este proyecto se estructura en diferentes secciones específicas:
     	- Directorio de respuestas específica de cada modelo
 	- **/version**
     	- Directorio específico de versión consultada
+    	- **analitica_comparativa.md**
+        	- Archivo con el resumen de información analitica de la comparación entre la mejor respuesta del modelo y la taxonomía manual
+      	- **taxonomia_manual_v[version_nro].md**
+        	- Archivo de la sección de taxonomía manual asociada a la versión
 	- **/metadata**
     	- Directorio de almacén de datos de solicitudes y respuestas
 

@@ -90,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default=os.getenv("MODEL"))
     parser.add_argument("--temperature", type=float, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=bool_conv(os.getenv("EJECUTAR_ETAPA_VERIFICACION", False)))
+    parser.add_argument("--project_id", type=str, help="Clave del proyecto OpenAI", default=os.getenv("PROJECT_ID"))
 
     args = parser.parse_args()
 
@@ -123,7 +124,8 @@ if __name__ == "__main__":
                 usar_qiskit_release_notes = args.inyecta_info_qrn, 
                 model_answers_path = args.model_answers_path, 
                 model = args.model,
-                temperature = args.temperature
+                temperature = args.temperature,
+                project_id = args.project_id
             )
 
         if args.verificacion:           
