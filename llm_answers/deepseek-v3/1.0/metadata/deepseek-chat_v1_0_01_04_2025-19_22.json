@@ -1,0 +1,31 @@
+{
+  "id": "52da9de0-26ca-46d2-9cd8-56aa9f52deaa",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "Aquí está la tabla Markdown exhaustiva con los escenarios de migración para Qiskit 1.0.0, basada en las Release Notes proporcionadas:",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743546166,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 36,
+    "prompt_tokens": 20001,
+    "total_tokens": 20037,
+    "prompt_tokens_details": {
+      "cached_tokens": 19968
+    },
+    "prompt_cache_hit_tokens": 19968,
+    "prompt_cache_miss_tokens": 33
+  },
+  "temperature": 0.0,
+  "max_tokens": 4000,
+  "stream": false
+}

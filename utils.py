@@ -88,81 +88,90 @@ def obtener_ultimas_dos_secciones(ruta):
     # Reconstruir la subruta con el separador original
     return os.sep.join(ultimas_dos)
 
-def obtener_system_prompt(version_objetivo, url_release_notes, url_changelog="https://github.com/qiskit/qiskit/releases/tag/{version}"):
+def obtener_developer_prompt(version_objetivo, url_release_notes, url_changelog="https://github.com/qiskit/qiskit/releases/tag/{version}"):
 	return f'''
-		Genere una tabla Markdown con 8 columnas sobre migraciones en Qiskit:
+		Eres un asistente experto en ingeniería de software cuántica, altamente capacitado en el ecosistema qiskit y sus liberaciones de versión.
+        Genere una tabla Markdown con 9 columnas sobre migraciones en Qiskit:
 
-		| Tipo de Cambio | Flujo de Cambio | Resumen | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |
-		|----------------|-------------------------------------|---------|----------------------|-----------------------|------------|----------------|-------------|
+		| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |
+		| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |
 
-		- **Columnas:**  
-		1. Tipo de Cambio (inserción, actualización, deprecación, cambio de estructura de módulos, nueva librería, etc.; excluir Bug Fixes)  
-		2. Versiones en formato `**o.o.x** → **d.d.x**` (excluir último dígito de versión indicando ".x")
-		3. Descripción concisa del escenario y los módulos, clases, objetos, artefactos, librerías o lenguajes implicados
-		4/5. Fragmentos de código (solo si existen fuentes verificadas)  
-		6. Dificultad (`Alta/Moderada/Baja/Nula`) + justificación breve  
-		7. Impacto en SE/QSE + justificación (opciones no excluyentes)
-		8. Enlaces oficiales validados  
+		- **Columnas:**
+		1. Tipo de Cambio (inserción, actualización, deprecación, cambio de estructura de módulos, nueva librería, etc)
+		2. Versiones qiskit de origen y de destino
+		3. Descripción concisa del escenario y su propósito
+        4. Artefactos software o hardware implicados (Clase, Objeto, método, parámetro, librería externa o dependencia, lenguaje, comando, herramientas externas, dependencias, módulos del ecosistema qiskit, etc.) ej: 'qiskit-aer', 'qiskit-ibm-runtime', 'pip', matplotlib, numpy, etc.
+		5/6. Código de ejemplo pre/post migración
+		7. Dificultad, con valores posibles:
+          	- `**Alta**`: implica cambios estructurales, complejos y relevantes
+            - `**Moderada**`: implica algunos pocos, sin demasiado trabajo de refactor
+            - `**Baja**`: implica modificación simple en el código, ej: renombrado de funciones o parametrizaciones
+            - `**Nula**`: sin impacto ni complejidad para migrar de versión, ej: mejora interna
+		8. Impacto en SE/QSE + justificación (opciones no excluyentes)
+		9. Enlaces oficiales validados
 
-		**Requisitos:**  
-		1. **Componentes:** QuantumCircuit, Transpiler, Primitives, Providers, Terra/Aer/Ignis/Experiments, Operadores, PassManagers, Visualización.  
-		2. **Tipos de cambios:** Deprecaciones, herencia, migración de funciones, modificaciones de firmas, reestructuraciones de paquetes, serialización, modelos de datos.  
-		3. **Condición crítica en Columna "Flujo de Cambio":** Origen ≥ 0.05.x y destino ≤ {version_objetivo}.0.  
-		4. **Priorizar:** 
-		- Casos paradigmáticos y cambios disruptivos (api, transpilador, parámetros, métodos, reestructuraciones, migraciones, deprecaciones)  
-		
-
-		**Restricciones críticas:**  
-		- Solo tabla Markdown válida (sin texto adicional)  
-		- Celdas vacías permitidas solo en **columnas de código de ejemplo** (4/5)
-		- **Referencias** 
+		**Restricciones críticas:**
+        - **Fuente de información primordial**, el usuario la indicará entre etiquetas `**<qrn></qrn>**`
+		- **Formato**:
+          	- **Respuesta esperada, una única tabla con sintaxis Markdown válida**
+            - Columna 5/6, sólo con **código python válido**
+            - Columna 2. "Flujo de Cambio"
+               - `**o.o.x** → **d.d.0**` (dígito menos significativo en versión de origen: _`.x`_ y en destino: _`.0`_)
+               - versión de origen ≥ 0.05.x y versión destino ≤ {version_objetivo}.0
+            - Columna 7. "Dificultad", con formato: **`Alta`/`Moderada`/`Baja`/`Nula`** _(breve descripción justificativa)_ Ej: **Alta** _(requiere la instalación de paquetes)_
+            - Columna 8. "Referencias", con formato: **`Release Notes`/`Changelog GitHub`/`Documentation oficial`/`Migration Guides`**, si hay más de una, separadas por salto de línea
+            - **Descripción extensiva y exhaustiva de scenarios atómicos**, 1 cambio por fila incluso si:
+				- Afecta un mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`)
+            	- Coincide el "Tipo de Cambio": no permitir listados con "<br>+", "•" u otros separadores internos en una celda
+               	- Si un cambio implica múltiples aspectos (ej: deprecación + migración), crear filas separadas
+		- **Celdas opcionales**:
+          	- Columna 5. "Código Pre-Migración"
+            - Columna 6. "Código Post-Migración"
+		- **Columna 8. "Referencias"**
           	- Hipervínculos correctos y accesibles
-            - Utilizar exclusivamente **enlaces a fuentes oficiales** en este orden: Release Notes > Changelog > Documentation > Migration Guides  
-		- Excluir Bug Fixes, escenarios hipotéticosy cambios sin documentacion oficial de respaldo
-        - Celdas vacías permitidas solo en código pre/post
-		- Sintaxis Markdown válida (sin wrappers adicionales)
-    	- **Ordenamiento de filas**: la tabla final DEBE estar ordenada por:  
-  			1. Columna "Dificultad" 6:  "Alta" > "Moderada" > "Baja" > "Nula"  
-  			2. Columna "Tipo de Cambio" "Inserción" > "Actualización" > "Deprecación"  
-			- Mantener este orden incluso si contradice otros criterios de visualización 
-        	- No usar funciones de sorting Markdown (ej: <!-- SORT -->), aplicar orden directamente en generación de los datos
-    	- **No incluir ningún texto externo a la tabla**, toda respuesta debe ser contenida en la tabla
-		- **Formato celda**: Texto conciso sin saltos de línea. Si un cambio implica múltiples aspectos (ej: deprecación + migración), crear filas separadas. No admitir celdas con valor "N/A", si no hay datos indicar ""
-        - **Descripción de scenarios atómicos y extensiva**, 1 cambio por fila incluso si:  
-			- Afecta mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`)  
-            - Coincide el "tipo de cambio": no permitir listados con "<br>+", "•", u otros separadores internos en una celda  
-		**Fuentes Prioritarias**:  
-		- Release Notes Oficiales ({url_release_notes})  
-		- Changelog de GitHub ({url_changelog})  
-		- No usar documentación histórica pre-{version_objetivo}.0
+            - Utilizar exclusivamente **enlaces a fuentes oficiales** en este orden:
+            	1. Release Notes (_`https://docs.quantum.ibm.com/api/qiskit/release-notes`_)
+                2. Changelog GitHub (_`https://github.com/Qiskit/qiskit/releases/tag/{version_objetivo}.0`_)
+                3. Documentation oficial (_`https://docs.quantum.ibm.com/`_)
+                4. Migration Guides (_`https://docs.quantum.ibm.com/migration-guides`_)
+            - No usar documentación histórica pre-{version_objetivo}.0, ni secciones: "Prelude" o "Bug Fixes"
+		- **Exclusiones**:
+          	- Bug Fixes, errores en versiones menores, escenarios hipotéticos y cambios sin documentacion oficial de respaldo
+            - Texto contenido por fuera de la tabla solicitada, sin wrappers adicionales
+    	- **Ordenamiento**, ordenar filas primero por Columna 7. "Dificultad" (Alta → Moderada → Baja → Nula), luego por Columna 8. "Impacto SE/QSE" (QSE → SE)"
+                  
+        - Ejemplo de filas en la tabla:
+        | Nueva Librería | **0.45.x** → **1.0.0** | Introducción de librería: `qiskit-dynamics` para simulaciones | módulo: `qiskit-dynamics`, 'requirements.txt' |  | `from qiskit_dynamics import Solver` | **Alta** _(nueva dependencia)_ | **QSE** _(requiere actualizar entornos)_ | [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) | 
+        | Deprecación | **0.19.x** → **1.0.0** | Uso de `qiskit.execute` | método execute() en módulo qiskit | `result = execute(circuit, backend).result()` | `from qiskit import transpile; job = backend.run(transpile(circuit, backend))` | **Moderada** _(nuevo flujo de ejecución)_ | **SE** _(requiere refactorizar workflows)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#1.0.0), [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) |  
 	'''
 
-def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, url_objetivo_qrn="", 
-                        url_changelog_qGitHub="https://github.com/qiskit/qiskit/releases/tag/{version}"):
+def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, url_objetivo_qrn="https://docs.quantum.ibm.com/api/qiskit/release-notes"):
     return f'''
-    Genere una tabla Markdown exhaustiva para cada escenario de migraciones Qiskit para la versión destino: {version_objetivo}.0: 
+		Genere una tabla Markdown exhaustiva para cada escenario de migración Qiskit para la versión destino: {version_objetivo}.0:
 
-	**Tipos de Cambio Prioritarios:**  	 
-	- Modificaciones sobre la API (clases y métodos fundamentales, parámetros y estructura)
-	- Reestructuraciones de módulos (qiskit.* → qiskit_*)
-	- Cambios en defaults/formatos de retorno (ej: dict → clase)
-	- Migración a paquetes externos y nuevas librerías (ej: requiere pip install)
-    - Deprecaciones con remoción en versión {version_objetivo}.0
-    - Nuevas funcionalidades y actualizaciones en versión {version_objetivo}.0
+        - **Fuente Primordial de información**:
+			**Qiskit Release Notes versión {version_objetivo}.0** {f": **<qrn>**{file_content}**</qrn>**" if inyectar_qiskit_release_notes else f"_{url_objetivo_qrn}_"}
 
-	**Directivas de Análisis:**  
-	1. **Fuentes Primarias**:  
-	- **Release notes Qiskit** (versión {version_objetivo}.0) {f": _{file_content}_" if inyectar_qiskit_release_notes else f"_{url_objetivo_qrn}_"}  
-	- **Changelog oficial GitHub** (versión {version_objetivo}.0: _{url_changelog_qGitHub}_)  
-
-	2. **Criterios de Inclusión**:  
-	- Filas independientes por tipo de cambio (ej: inserción ≠ actualización ≠ deprecación ≠ reestructuración)  
-	- Incluir cambios documentados pero sin ejemplos de código origen o destino
-	- Dependencias críticas (numpy ≥ 1.2x, pip, matplotlib, etc)  
-    - Lenguajes, librerías, funcionalidades, herramientas externas, etc.
-    
-    **Ejemplo paradigmático de un escenario** (un ejemplo de fila en la tabla):
-	- Reestructuración de paquetes	| 0.05.x → {version_objetivo}.x | qiskit-terra → qiskit (core) |	pip install qiskit-terra |	pip install qiskit | Alta  (involucra instalación de paquetes) | SE/QSE (requiere entorno virtual nuevo) | Qiskit 1.0 Packaging Migration, Qiskit release notes 1.0 y Migration Guide
+		**Directivas de análisis:** 
+			1. **Escenarios** (filas de la tabla):
+				- Modificaciones sobre la API (clases y métodos fundamentales, parámetros y estructura)
+				- Reestructuraciones de módulos (qiskit.* → qiskit_*) y migración de funcionalidades
+				- Cambios en defaults/formatos de retorno (ej: dict → clase)
+				- Migración a paquetes externos y nuevas librerías (ej: requiere pip install)
+				- Nuevas funcionalidades, actualizaciones y deprecaciones en versión {version_objetivo}.0
+			2. **Artefactos Afectados**:  
+				- Clases: `QuantumCircuit`, `Transpiler` 
+				- Métodos: `QuantumCircuit.bind_parameters()`  
+				- Paquetes: `qiskit-terra` → `qiskit`  
+				- Dependencias: `numpy ≥ 1.21`
+			3. **Tipo de Cambio:**: 
+				- **API**: Métodos, clases, parámetros
+				- **Módulos**: Reestructuración `qiskit.*` → `qiskit_*` 
+				- **Formatos**: `dict` → `QuantumResult`
+				- **Dependencias**: Nueva librería (`qiskit-dynamics`) 
+			4. **Criterios de Inclusión**:  
+				- Filas independientes por tipo de cambio (ej: inserción ≠ actualización ≠ deprecación ≠ reestructuración)
+				- Migraciones documentadas pero sin ejemplos de código origen o destino
    '''
 
 def apto_md(contenido):
@@ -187,6 +196,57 @@ def guardar_metadata_completion(completion, path, filename, payload):
 
         json.dump(completion_dict, f, indent=2, ensure_ascii=False)
         print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
+
+def obtener_parametrizacion(model, messages, temperature):
+    
+    '''
+    # Genérico -> chatGPT
+    payload = {
+        "model": model,             # Modelo LLM objetivo
+        "messages": messages,       # Prompts del sistema y del usuario
+        "temperature": temperature, # Máxima precisión para datos estructurados 0.25 DeepSeek
+        #"top_p": 0.5,               # Balance entre cobertura y ruido
+        "max_tokens": 3000,         # Capacidad para ~20-25 filas
+        #"presence_penalty": 0.8,    # Evita redundancias en columnas
+        #"frequency_penalty": 0.9,   # ↓ repetición de términos técnicos (ej: "QuantumCircuit")
+        #"n": 1,                     # Cantiadad de respuestas resultantes
+        "stream": False,            # Modalidad de flujo de datos
+        #"stop": ["##", "<!--", "<!--END-->", "## Notas"]  # Delimitadores claros
+    }
+
+    '''
+    
+    # Payload deepseek-v3
+    payload = {
+        "model": model,             # Modelo LLM objetivo
+        "messages":messages,
+        "temperature": temperature, # Máxima fidelidad al formato
+        "top_p": 0.05,              # Enfoque ultra-estricto en sintaxis MD
+        "max_tokens": 4000,         # Capacidad para tablas complejas +30 filas
+        "frequency_penalty": 1.2,   # Eliminar repetición de headers
+        "presence_penalty": 0.9,  	# Incentivar contenido nuevo por fila 
+        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```"],   # Prevenir markdown adicional
+        "n": 1, 
+        "stream": False, 
+    }
+    
+    '''
+    # Payload deepseek-r1
+    payload = {
+        "model": model,             # Modelo LLM objetivo
+        "messages": messages,       # Prompts del sistema y del usuario
+        "temperature": 0.1,         # Maximizar precisión técnica
+        "top_p": 0.05,              # Enfoque estricto en fuentes oficiales
+        "max_tokens": 3000,         # Tamaño típico de tablas de migración
+        "frequency_penalty": 0.7,   # Reducir repetición en múltiples filas
+        "presence_penalty": 0.5,    # Garantizar cobertura de componentes requeridos
+        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
+        "system_prompt_ratio": 0.6, # Priorizar estructura técnica
+        "stream": False,            # Modalidad de flujo de datos
+        "n": 1,                     # Cantiadad de respuestas resultantes
+    }
+    '''
+    return payload
 
 if __name__ == "__main__":
     

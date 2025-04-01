@@ -27,71 +27,41 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
     with open(file_path, 'r', encoding='utf-8') as f:
         file_content = f.read()
 
-    # Generación de prompts
-    system_content = obtener_system_prompt(url_objetivo, version_objetivo)
-    user_content = obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, url_objetivo)
-
     messages = [
         {
             "role": "system",
-            "content": system_content
+            "content": [
+                {
+                    "type": "text",
+                    "text": obtener_developer_prompt(url_objetivo, version_objetivo)
+                }
+            ]
         },
         {
             "role": "user",
-            "content": user_content
+            "content": [
+                {
+                    "type": "text",
+                    "text": obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, url_objetivo)
+                }
+            ]
         }
     ]
 
-    # Genérico -> chatGPT
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages": messages,       # Prompts del sistema y del usuario
-        "temperature": temperature, # Máxima precisión para datos estructurados 0.25 DeepSeek
-        #"top_p": 0.5,               # Balance entre cobertura y ruido
-        "max_tokens": 3000,         # Capacidad para ~20-25 filas
-        #"presence_penalty": 0.8,    # Evita redundancias en columnas
-        #"frequency_penalty": 0.9,   # ↓ repetición de términos técnicos (ej: "QuantumCircuit")
-        #"n": 1,                     # Cantiadad de respuestas resultantes
-        "stream": False,            # Modalidad de flujo de datos
-        #"stop": ["##", "<!--", "<!--END-->", "## Notas"]  # Delimitadores claros
-    }
-
-    '''
+    ##payload = obtener_parametrizacion(model=model, messages=messages, temperature=temperature)
     # Payload deepseek-v3
     payload = {
         "model": model,             # Modelo LLM objetivo
-        "messages": messages,       # Prompts del sistema y del usuario
-        "temperature": 0.0,         # Máxima fidelidad al formato
+        "messages":messages,
+        "temperature": temperature, # Máxima fidelidad al formato
         "top_p": 0.05,              # Enfoque ultra-estricto en sintaxis MD
-        "max_tokens": 3000,         # Capacidad para tablas complejas
-        "frequency_penalty": 1.5,   # Eliminar repetición de headers
-        "presence_penalty": 0.7,  
-        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
-        "system_prompt_ratio": 0.75,  # Priorizar plantilla MD
-        "format_constraints": {
-            "markdown_table": {
-            "columns": 8,
-            "required_headers": ["Tipo de Cambio", "Flujo de Cambio", "Resumen", "Código Pre-Migración", "Código Post-Migración", "Dificultad", "Impacto SE/QSE", "Referencias"],
-            "alignment": "left"
-            }
-        }
+        "max_tokens": 3000,         # Capacidad para tablas complejas +30 filas
+        "frequency_penalty": 1.2,   # Eliminar repetición de headers
+        "presence_penalty": 0.9,  	# Incentivar contenido nuevo por fila 
+        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```"],   # Prevenir markdown adicional
+        "n": 1, 
+        "stream": False, 
     }
-
-    # Payload deepseek-r1
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages": messages,       # Prompts del sistema y del usuario
-        "temperature": 0.1,         # Maximizar precisión técnica
-        "top_p": 0.05,              # Enfoque estricto en fuentes oficiales
-        "max_tokens": 3000,         # Tamaño típico de tablas de migración
-        "frequency_penalty": 0.7,   # Reducir repetición en múltiples filas
-        "presence_penalty": 0.5,    # Garantizar cobertura de componentes requeridos
-        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
-        "system_prompt_ratio": 0.6, # Priorizar estructura técnica
-        "stream": False,            # Modalidad de flujo de datos
-        "n": 1,                     # Cantiadad de respuestas resultantes
-    }
-    '''
 
     try:
         
@@ -105,13 +75,14 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             messages=payload['messages'], 
             temperature=payload['temperature'],
             #top_p=payload['top_p'],
-            max_tokens=payload['max_tokens'],
+            #max_tokens=payload['max_tokens'],
             #presence_penalty=payload['presence_penalty'],
             #frequency_penalty=payload['frequency_penalty'],
-            #n=payload['n'],
-            stream=payload['stream'],
+            #response_format=payload['response_format'],
             #system_prompt_ratio=payload['system_prompt_ratio'],
-            #stop=payload['stop']
+            #stop=payload['stop'],
+            #n=payload['n'],
+            stream=payload['stream']
         )
         
         #print(completion.choices[0].message.content)
