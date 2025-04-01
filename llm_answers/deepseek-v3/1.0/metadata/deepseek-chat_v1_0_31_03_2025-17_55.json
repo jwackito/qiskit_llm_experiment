@@ -1,0 +1,31 @@
+{
+  "id": "24b78ab4-71e5-45e5-8081-ce251a4e6ea5",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio | Versiones (Origen→Destino) | Artefactos Afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n|----------------|---------------------------|-----------------------|----------------------|-----------------------|------------|----------------|-------------|\n| Reestructuración de paquetes | 0.46.0 → 1.0.0 | qiskit-terra → qiskit (core) | `pip install qiskit-terra` | `pip install qiskit` | Alta | SE/QSE (requiere entorno virtual nuevo) | [Qiskit 1.0 Packaging Migration](https://qisk.it/1-0-packaging-migration) |\n| Migración de Primitivas | 0.46.0 → 1.0.0 | BaseSampler/BaseEstimator → BaseSamplerV2/BaseEstimatorV2 | `run(circuits, observables, parameter_values)` | `run([(circuit, observables, params)])` (vectorizado) | Alta | SE (cambios en firmas y retornos) | [Release Notes 1.0.0](https://github.com/qiskit/qiskit/releases/tag/1.0.0) |\n| Deprecación de IBMQ | 0.46.0 → 1.0.0 | qiskit.IBMQ → qiskit-ibm-provider | `from qiskit import IBMQ` | `pip install qiskit-ibm-provider` + imports actualizados | Moderada | QSE (requiere instalación adicional) | [Migration Guide](https://qisk.it/ibm-provider-migration) |\n| Serialización QPY | 0.45.0 → 1.0.0 | qiskit.circuit.qpy_serialization → qiskit.qpy | `from qiskit.circuit.qpy_serialization import dump` | `from qiskit.qpy import dump` | Baja | SE (cambios en rutas de importación) | [Changelog 1.0.0](https://github.com/qiskit/qiskit/blob/main/CHANGELOG.md) |\n| Visualización de circuitos | 0.46.0 → 1.0.0 | qiskit.visualization.qcstyle → qiskit.visualization.circuit.qcstyle | `from qiskit.visualization.qcstyle import default` | `from qiskit.visualization.circuit.qcstyle import default` | Baja | SE (cambios en rutas) | [Release Notes 1.0.0](https://github.com/qiskit/qiskit/releases/tag/1.0.0) |\n| Operadores cuánticos | 0.46.0 → 1.0.0 | SparsePauliOp.from_operator() (lento) | `SparsePauliOp.from_operator(op)` | Implementación optimizada con algoritmo tensorizado | Moderada | SE (mejora rendimiento) | [Release Notes 1.0.0](https://github.com/qiskit/qiskit/releases/tag/1.0.0) |\n| Transpilador - Layout | 0.46.0 → 1.0.0 | NoiseAdaptiveLayout → VF2Layout/VF2PostLayout | `layout_method=\"noise_adaptive\"` | `layout_method=\"vf2\"` | Moderada | SE (cambia algoritmo de selección) | [Changelog 1.0.0](https://github.com/qiskit/qiskit/blob/main/CHANGELOG.md) |\n| Fake Backends | 0.46.0 → 1.0.0 | FakeProvider → qiskit-ibm-runtime | `from qiskit.providers.fake_provider import FakeVigo` | `pip install qiskit-ibm-runtime` + `from qiskit_ibm_runtime.fake_provider import FakeVigo` | Alta | QSE (requiere paquete externo) | [Migration Guide](https://qisk.it/fake-provider-migration) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743454469,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 942,
+    "prompt_tokens": 19301,
+    "total_tokens": 20243,
+    "prompt_tokens_details": {
+      "cached_tokens": 128
+    },
+    "prompt_cache_hit_tokens": 128,
+    "prompt_cache_miss_tokens": 19173
+  },
+  "temperature": 0.2,
+  "max_tokens": 3000,
+  "stream": false
+}

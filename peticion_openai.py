@@ -1,130 +1,12 @@
-import os, json
+import os
 from openai import OpenAI
 from datetime import datetime
-from utils import obtener_ultimas_dos_secciones
+from utils import *
 
-def obtener_system_prompt(url_objetivo, version_objetivo):
-    version = version_objetivo + ".0"
-    return f'''
-        Obten una respuesta con formato tabular que incluya las siguientes 8 dimensiones (columnas de la tabla) relacionados con los escenarios de migración y refactoring en Qiskit:
-        Columna 1: Categoría: Tipo de cambio (Ej: cambio estructural, lenguaje, implica librería externa, inserción / modificación / deprecación / remoción, breve descripción de módulo, función, clase, método, o artefacto implicado. Omite Bug Fixes.
-        Columna 2: Flujo de cambio, indicando las versiones involucradas de origen y destino, no es necesario indicar versiones bug-fixes sino solo "x" para ese último dígito (Formato: o.o.x → d.d.x).
-        Columna 3: Resumen del escenario, con una descripción breve y concisa resumiendo los principales artefactos que sufrieron cambios (1 línea).
-        Columna 4: Ejemplo de código en versión de origen, fragmento Python previo al cambio.
-        Columna 5: Ejemplo de código en versión de destino, fragmento Python posterior al cambio.
-        Columna 6: Grado de dificultad asociada al nivel de esfuerzo requerido de migración ("Nula" si no afecta al código vs "Baja" si reviste poca dificultad de migración vs "Moderada" si requiere múltiples cambios de adaptación vs "Alta" si es un cambio disruptivo y afecta la API), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
-        Columna 7: Grado de afectación sobre "ing. de software clásica" (SE) vs "ing. de software cuántica" (QSE), entre paréntesis indicar una muy breve descripción justificando esa clasificación.
-        Columna 8: Referencia, enlaces a una o más fuentes autoritativas de origen de la información, celda requerida.
+def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, 
+                  usar_qiskit_release_notes, model_answers_path, model, temperature, project_id):
 
-        Requisitos adicionales para la generación de la tabla:
-            1. Revisa exhaustivamente cambios en todos estos componentes Qiskit y recopilalos todos: QuantumCircuit, Transpiler, Primitives, Providers (IBMQ/Aer), Qiskit Terra/Aer/Ignis/Experiments, Operadores, PassManagers, Visualización.                
-
-            2. Considera específicamente estos tipos de cambios:
-                - Deprecaciones de clases/métodos entre versiones 
-                - Cambios de jerarquía de clases (herencia)
-                - Migración de funciones entre módulos
-                - Modificaciones en firmas de métodos (args/kwargs)
-                - Reestructuraciones de paquetes (qiskit.* → qiskit_*)
-                - Cambios en mecanismos de configuración
-                - Actualizaciones de dependencias externas (numpy, scipy, etc)
-                - Modificaciones en sistemas de serialización
-                - Cambios en modelos de datos (QuantumCircuit.data)
-                - Transiciones de APIs síncronas a asíncronas
-
-            3. Para cada versión objetivo indicada: {version}, debes enunciar todas las transiciones relevantes:
-                - desde la versión base 0.05.0 y superiores, pudiendo incluir cambios como: 0.05.x → {version}, 0.06.x → {version}, etc.
-                - Siempre la versión de destino del cambio debe ser mayor o igual que la de origen.
-
-            4. Prioriza la creación de filas distintas para:
-                - Cambios en diferentes sub-módulos (ej: qiskit.circuit vs qiskit.transpiler)
-                - Tipos de operación distintos (inserción vs actualización vs deprecación vs remoción vs reubicación)
-                - Considera la estructura de cambios que utiliza v{url_objetivo}
-                - Niveles de abstracción diferentes (clases base vs implementaciones específicas)
-                - Componentes afectados (librerias externas, involucra pip, backend, breaking-changes)
-                - Incluye casos paradigmáticos como: migraciones de transpilador, cambios de parámetros, reestructuracion de módulos, etc.
-            
-        Restricciones:
-            - Respuesta en formato tabular expresada con el lenguaje de marcado "Markdown" con formato Markdown. Evita saltos de línea innecesarios en una misma fila de tabla.
-            - Evitar texto externo a la tabla mísma, explicaciones extras o aclaraciones, sólo limítate a entregar una tabla resultante.
-            - Los códigos python de ejemplos deben ser correctos, extraídos de fuentes especificadas, en caso de no encontrar, no indicar ninguno.
-            - Usar como referencias, sólo hipervínculos validados y oficiales.
-            - En el flujo de cambios (segunda columna) nunca la versión superior debe ser mayor que v{version}, pudiendo admitirse cualquiera en la versión de origen.
-            - No consolidar escenarios y cambios, priorizar la abarcabildiad y extensión de escenarios.
-            - Verificar la visualización correcta en formato Markdown.
-            - Si para alguna celda opcional, no se dispone de información supervisada, indicarla como vacía, es decir, con valor: "".
-            - Solo se admiten celdas vacías para los ejemplos de código (4° y 5° columna).
-            - Evitar escenarios hipotéticos o no documentados, pero se exhaustivo enunciando los documentados.
-            - Utiliza la siguiente lista de fuentes en este ordenamiento para su revisión exhaustiva:
-                - Qiskit SDK realce notes ({url_objetivo}) (principal)
-                - Qiskit Changelog (https://github.com/qiskit/qiskit/releases/tag/{version}) (principal)
-                - Qiskit Documentation tree (https://github.com/Qiskit/documentation/tree/main/docs/api/qiskit/{version_objetivo}) (secundaria)
-                - Qiskit Leatest updates (https://docs.quantum.ibm.com/guides/latest-updates) (secundaria)
-                - Qiskit Migration guides (https://docs.quantum.ibm.com/migration-guides) (secundaria)
-                - Si el cambio tiene un enlace interno, indícalo también como una nueva línea en la columna de referencias, entre paréntesis indicar el tipo de fuente ("principal" vs "secundaria").
-            - No generes filas a partir de ninguna migración de corrección de código del tipo: Bug Fixes.
-    '''
-
-def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content):
-    version = version_objetivo + ".0"
-    return f'''
-        Describe exhaustivamente todos los escenarios de migración Qiskit en la versión objetivo {version} considerando:
-
-        1. Componentes críticos a inspeccionar:
-            - QuantumCircuit y sus métodos (compose, combine, etc)
-            - Transpiler (passes, niveles de optimización)
-            - Primitivas (Sampler, Estimator)
-            - Módulos de proveedores (IBMProvider, Backends)
-            - Operadores (Pauli, SparsePauliOp)
-            - Sistemas de visualización (circuit_drawer, plot_histogram)
-            - Mecanismos de ejecución (Aer simulators, BasicAer)
-            - Qiskit-Terra vs Aer vs Experiments
-
-        2. Tipos de cambios a priorizar:
-            - Deprecaciones con removal en {version}
-            - Cambios de API en métodos fundamentales
-            - Reestructuraciones de módulos (qiskit.providers.ibmq → qiskit_ibm_provider)
-            - Modificaciones en parámetros obligatorios/opcionales
-            - Cambios en valores por defecto
-            - Alteraciones en formatos de retorno (dict → clase específica)
-            - Migración de funcionalidades a paquetes externos (qiskit-*)
-            - Instalaciones o ejecución de pip
-
-        3. Directivas de análisis:
-            - Examinar minuciosamente las release notes adjuntas
-            - Cruzar información con changelogs oficiales
-            - Priorizar cambios que afecten >2 componentes
-            - Generar filas independientes por tipo de cambio aunque afecten mismo módulo
-            - Incluir casos aunque no existan ejemplos de código disponibles
-            - Considerar cambios en dependencias (numpy >= 1.2x, etc)
-            {f"- Considera de suma relevancia la siguiente información de versión {version} para analizarla detalladamente: {file_content}" if inyectar_qiskit_release_notes else ""} 
-    '''
-
-def apto_md(contenido):
-    return contenido.replace("```markdown", "", 1).rstrip("```").strip()
-
-def guardar_metadata_completion(completion, path, filename, payload):
-
-    path_metadata = os.path.join(path, "metadata")
-    file_metadata_path = os.path.join(path_metadata, filename + ".json")
-
-    if not os.path.exists(path_metadata):
-        os.makedirs(path_metadata, exist_ok=True)
-
-    with open(file_metadata_path, 'w', encoding='utf-8') as f:
-        # Asumiendo que 'completion' es un objeto de OpenAI u similar
-        completion_dict = completion.to_dict()
-
-        # Añado la info de la solicitud
-        completion_dict["temperature"] = payload['temperature']
-        completion_dict["max_tokens"] = payload['max_tokens']
-        completion_dict["stream"] = payload['stream']
-
-        json.dump(completion_dict, f, indent=2, ensure_ascii=False)
-        print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
-
-def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, model, temperature, project_id):
-
-    print(f'''\n[INFO] Invocación al modelo {model} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit rrnn ({url_objetivo})" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
+    print(f'''\n[INFO] Invocación al modelo {model} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
     headers = {
         "Content-Type": "application/json",
@@ -147,7 +29,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
 
     # Generación de prompts
     system_content = obtener_system_prompt(url_objetivo, version_objetivo)
-    user_content = obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content)
+    user_content = obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, url_objetivo)
 
     messages = [
         {
@@ -160,13 +42,56 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
         }
     ]
 
+    # Genérico -> chatGPT
     payload = {
-        "model": model,
-        "messages": messages,
-        "temperature": temperature,
-        "max_tokens": 2048,
-        "stream": False
+        "model": model,             # Modelo LLM objetivo
+        "messages": messages,       # Prompts del sistema y del usuario
+        "temperature": temperature, # Máxima precisión para datos estructurados 0.25 DeepSeek
+        #"top_p": 0.5,               # Balance entre cobertura y ruido
+        "max_tokens": 3000,         # Capacidad para ~20-25 filas
+        #"presence_penalty": 0.8,    # Evita redundancias en columnas
+        #"frequency_penalty": 0.9,   # ↓ repetición de términos técnicos (ej: "QuantumCircuit")
+        #"n": 1,                     # Cantiadad de respuestas resultantes
+        "stream": False,            # Modalidad de flujo de datos
+        #"stop": ["##", "<!--", "<!--END-->", "## Notas"]  # Delimitadores claros
     }
+
+    '''
+    # Payload deepseek-v3
+    payload = {
+        "model": model,             # Modelo LLM objetivo
+        "messages": messages,       # Prompts del sistema y del usuario
+        "temperature": 0.0,         # Máxima fidelidad al formato
+        "top_p": 0.05,              # Enfoque ultra-estricto en sintaxis MD
+        "max_tokens": 3000,         # Capacidad para tablas complejas
+        "frequency_penalty": 1.5,   # Eliminar repetición de headers
+        "presence_penalty": 0.7,  
+        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
+        "system_prompt_ratio": 0.75,  # Priorizar plantilla MD
+        "format_constraints": {
+            "markdown_table": {
+            "columns": 8,
+            "required_headers": ["Tipo de Cambio", "Flujo de Cambio", "Resumen", "Código Pre-Migración", "Código Post-Migración", "Dificultad", "Impacto SE/QSE", "Referencias"],
+            "alignment": "left"
+            }
+        }
+    }
+
+    # Payload deepseek-r1
+    payload = {
+        "model": model,             # Modelo LLM objetivo
+        "messages": messages,       # Prompts del sistema y del usuario
+        "temperature": 0.1,         # Maximizar precisión técnica
+        "top_p": 0.05,              # Enfoque estricto en fuentes oficiales
+        "max_tokens": 3000,         # Tamaño típico de tablas de migración
+        "frequency_penalty": 0.7,   # Reducir repetición en múltiples filas
+        "presence_penalty": 0.5,    # Garantizar cobertura de componentes requeridos
+        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
+        "system_prompt_ratio": 0.6, # Priorizar estructura técnica
+        "stream": False,            # Modalidad de flujo de datos
+        "n": 1,                     # Cantiadad de respuestas resultantes
+    }
+    '''
 
     try:
         
@@ -179,11 +104,17 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             model=payload['model'], 
             messages=payload['messages'], 
             temperature=payload['temperature'],
+            #top_p=payload['top_p'],
             max_tokens=payload['max_tokens'],
-            stream=payload['stream']
+            #presence_penalty=payload['presence_penalty'],
+            #frequency_penalty=payload['frequency_penalty'],
+            #n=payload['n'],
+            stream=payload['stream'],
+            #system_prompt_ratio=payload['system_prompt_ratio'],
+            #stop=payload['stop']
         )
         
-        print(completion.choices[0].message.content)
+        #print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path + f"/{version_objetivo}"))

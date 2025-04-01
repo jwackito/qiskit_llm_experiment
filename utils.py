@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, json
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -87,6 +87,106 @@ def obtener_ultimas_dos_secciones(ruta):
     
     # Reconstruir la subruta con el separador original
     return os.sep.join(ultimas_dos)
+
+def obtener_system_prompt(version_objetivo, url_release_notes, url_changelog="https://github.com/qiskit/qiskit/releases/tag/{version}"):
+	return f'''
+		Genere una tabla Markdown con 8 columnas sobre migraciones en Qiskit:
+
+		| Tipo de Cambio | Flujo de Cambio | Resumen | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |
+		|----------------|-------------------------------------|---------|----------------------|-----------------------|------------|----------------|-------------|
+
+		- **Columnas:**  
+		1. Tipo de Cambio (inserción, actualización, deprecación, cambio de estructura de módulos, nueva librería, etc.; excluir Bug Fixes)  
+		2. Versiones en formato `**o.o.x** → **d.d.x**` (excluir último dígito de versión indicando ".x")
+		3. Descripción concisa del escenario y los módulos, clases, objetos, artefactos, librerías o lenguajes implicados
+		4/5. Fragmentos de código (solo si existen fuentes verificadas)  
+		6. Dificultad (`Alta/Moderada/Baja/Nula`) + justificación breve  
+		7. Impacto en SE/QSE + justificación (opciones no excluyentes)
+		8. Enlaces oficiales validados  
+
+		**Requisitos:**  
+		1. **Componentes:** QuantumCircuit, Transpiler, Primitives, Providers, Terra/Aer/Ignis/Experiments, Operadores, PassManagers, Visualización.  
+		2. **Tipos de cambios:** Deprecaciones, herencia, migración de funciones, modificaciones de firmas, reestructuraciones de paquetes, serialización, modelos de datos.  
+		3. **Condición crítica en Columna "Flujo de Cambio":** Origen ≥ 0.05.x y destino ≤ {version_objetivo}.0.  
+		4. **Priorizar:** 
+		- Casos paradigmáticos y cambios disruptivos (api, transpilador, parámetros, métodos, reestructuraciones, migraciones, deprecaciones)  
+		
+
+		**Restricciones críticas:**  
+		- Solo tabla Markdown válida (sin texto adicional)  
+		- Celdas vacías permitidas solo en **columnas de código de ejemplo** (4/5)
+		- **Referencias** 
+          	- Hipervínculos correctos y accesibles
+            - Utilizar exclusivamente **enlaces a fuentes oficiales** en este orden: Release Notes > Changelog > Documentation > Migration Guides  
+		- Excluir Bug Fixes, escenarios hipotéticosy cambios sin documentacion oficial de respaldo
+        - Celdas vacías permitidas solo en código pre/post
+		- Sintaxis Markdown válida (sin wrappers adicionales)
+    	- **Ordenamiento de filas**: la tabla final DEBE estar ordenada por:  
+  			1. Columna "Dificultad" 6:  "Alta" > "Moderada" > "Baja" > "Nula"  
+  			2. Columna "Tipo de Cambio" "Inserción" > "Actualización" > "Deprecación"  
+			- Mantener este orden incluso si contradice otros criterios de visualización 
+        	- No usar funciones de sorting Markdown (ej: <!-- SORT -->), aplicar orden directamente en generación de los datos
+    	- **No incluir ningún texto externo a la tabla**, toda respuesta debe ser contenida en la tabla
+		- **Formato celda**: Texto conciso sin saltos de línea. Si un cambio implica múltiples aspectos (ej: deprecación + migración), crear filas separadas. No admitir celdas con valor "N/A", si no hay datos indicar ""
+        - **Descripción de scenarios atómicos y extensiva**, 1 cambio por fila incluso si:  
+			- Afecta mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`)  
+            - Coincide el "tipo de cambio": no permitir listados con "<br>+", "•", u otros separadores internos en una celda  
+		**Fuentes Prioritarias**:  
+		- Release Notes Oficiales ({url_release_notes})  
+		- Changelog de GitHub ({url_changelog})  
+		- No usar documentación histórica pre-{version_objetivo}.0
+	'''
+
+def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, url_objetivo_qrn="", 
+                        url_changelog_qGitHub="https://github.com/qiskit/qiskit/releases/tag/{version}"):
+    return f'''
+    Genere una tabla Markdown exhaustiva para cada escenario de migraciones Qiskit para la versión destino: {version_objetivo}.0: 
+
+	**Tipos de Cambio Prioritarios:**  	 
+	- Modificaciones sobre la API (clases y métodos fundamentales, parámetros y estructura)
+	- Reestructuraciones de módulos (qiskit.* → qiskit_*)
+	- Cambios en defaults/formatos de retorno (ej: dict → clase)
+	- Migración a paquetes externos y nuevas librerías (ej: requiere pip install)
+    - Deprecaciones con remoción en versión {version_objetivo}.0
+    - Nuevas funcionalidades y actualizaciones en versión {version_objetivo}.0
+
+	**Directivas de Análisis:**  
+	1. **Fuentes Primarias**:  
+	- **Release notes Qiskit** (versión {version_objetivo}.0) {f": _{file_content}_" if inyectar_qiskit_release_notes else f"_{url_objetivo_qrn}_"}  
+	- **Changelog oficial GitHub** (versión {version_objetivo}.0: _{url_changelog_qGitHub}_)  
+
+	2. **Criterios de Inclusión**:  
+	- Filas independientes por tipo de cambio (ej: inserción ≠ actualización ≠ deprecación ≠ reestructuración)  
+	- Incluir cambios documentados pero sin ejemplos de código origen o destino
+	- Dependencias críticas (numpy ≥ 1.2x, pip, matplotlib, etc)  
+    - Lenguajes, librerías, funcionalidades, herramientas externas, etc.
+    
+    **Ejemplo paradigmático de un escenario** (un ejemplo de fila en la tabla):
+	- Reestructuración de paquetes	| 0.05.x → {version_objetivo}.x | qiskit-terra → qiskit (core) |	pip install qiskit-terra |	pip install qiskit | Alta  (involucra instalación de paquetes) | SE/QSE (requiere entorno virtual nuevo) | Qiskit 1.0 Packaging Migration, Qiskit release notes 1.0 y Migration Guide
+   '''
+
+def apto_md(contenido):
+    return contenido.replace("```markdown", "", 1).rstrip("```").strip()
+
+def guardar_metadata_completion(completion, path, filename, payload):
+
+    path_metadata = os.path.join(path, "metadata")
+    file_metadata_path = os.path.join(path_metadata, filename + ".json")
+
+    if not os.path.exists(path_metadata):
+        os.makedirs(path_metadata, exist_ok=True)
+
+    with open(file_metadata_path, 'w', encoding='utf-8') as f:
+        # Asumiendo que 'completion' es un objeto de OpenAI u similar
+        completion_dict = completion.to_dict()
+
+        # Añado la info de la solicitud
+        completion_dict["temperature"] = payload['temperature']
+        completion_dict["max_tokens"] = payload['max_tokens']
+        completion_dict["stream"] = payload['stream']
+
+        json.dump(completion_dict, f, indent=2, ensure_ascii=False)
+        print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
 
 if __name__ == "__main__":
     

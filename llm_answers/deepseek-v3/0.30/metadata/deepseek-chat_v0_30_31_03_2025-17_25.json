@@ -1,0 +1,31 @@
+{
+  "id": "aa0d49c9-55c7-481b-9725-3be99c1237fc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio | Versiones (Origen→Destino) | Artefactos Afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n|----------------|---------------------------|----------------------|----------------------|-----------------------|------------|----------------|-------------|\n| Deprecación | 0.18.x → 0.30.0 | `u3` gate en `QuantumCircuit` | `circuit.u3(theta, phi, lam, qubit)` | `circuit.u(theta, phi, lam, qubit)` | Moderada | QSE (requiere reescritura de circuitos) | [Release Notes](https://qiskit.org/documentation/release_notes.html) |\n| Reestructuración | 0.25.x → 0.30.0 | `qiskit.providers.aer.extensions` (snapshots) | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | Alta | SE (cambios en imports y lógica) | [Changelog](https://github.com/Qiskit/qiskit-aer/releases) |\n| Migración de Función | 0.28.x → 0.30.0 | `NoiseModel` basis gates | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | Baja | QSE (configuración de ruido) | [Docs](https://qiskit.org/documentation/stubs/qiskit.providers.aer.noise.NoiseModel.html) |\n| Actualización | 0.29.x → 0.30.0 | `AerSimulator.run()` | `backend.run(circuits, backend_options={...})` | `backend.run(circuits, **run_options)` | Nula | SE (sintaxis simplificada) | [Release Notes](https://qiskit.org/documentation/release_notes.html) |\n| Nueva Característica | 0.29.x → 0.30.0 | `parameter_binds` en Aer | N/A | `backend.run(circuit, parameter_binds=[{theta: [0, 3.14]}])` | Moderada | QSE (ejecución paramétrica) | [Aer Docs](https://qiskit.org/documentation/stubs/qiskit.providers.aer.AerSimulator.run.html) |\n| Deprecación | 0.18.x → 0.30.0 | GPU simulation en `StatevectorSimulator` | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | Baja | SE (cambio de parámetro) | [Changelog](https://github.com/Qiskit/qiskit-aer/releases) |\n| Reestructuración | 0.27.x → 0.30.0 | `PulseSimulator.run()` | `backend.run(schedule)` | `backend.run(circuit)` | Alta | QSE (manejo de pulsos) | [Release Notes](https://qiskit.org/documentation/release_notes.html) |\n| Actualización | 0.25.x → 0.30.0 | `PauliGate` en Aer | N/A | `AerSimulator` soporta nativamente `PauliGate` | Nula | SE (compatibilidad extendida) | [Aer Docs](https://qiskit.org/documentation/stubs/qiskit.providers.aer.AerSimulator.html) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743452712,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 822,
+    "prompt_tokens": 3939,
+    "total_tokens": 4761,
+    "prompt_tokens_details": {
+      "cached_tokens": 3904
+    },
+    "prompt_cache_hit_tokens": 3904,
+    "prompt_cache_miss_tokens": 35
+  },
+  "temperature": 0.2,
+  "max_tokens": 3000,
+  "stream": false
+}

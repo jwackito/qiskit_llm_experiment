@@ -1,0 +1,31 @@
+{
+  "id": "4c655d29-f626-451d-89df-de42c38dbcab",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio | Versiones (Origen→Destino) | Artefactos Afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n|----------------|---------------------------|----------------------|----------------------|-----------------------|------------|----------------|-------------|\n| Reestructuración de módulos | 0.18.x → 0.30.0 | qiskit.providers.aer.extensions.snapshot | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | Alta | Alto (requiere reescritura de snapshots) | [Aer 0.9.0 Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Cambio de parámetros obligatorios | 0.18.x → 0.30.0 | AerSimulator.run() | `backend.run(qobj, backend_options={...})` | `backend.run(circuits, **run_options)` | Alta | Moderado (migración de QObj a circuitos) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Migración de operadores | 0.23.x → 0.30.0 | PauliOp → SparsePauliOp | `PauliOp(label)` | `SparsePauliOp(label)` | Moderada | Moderado (cambio de clase base) | [Terra 0.18.0 Release Notes](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.0) |\n| Actualización de defaults | 0.25.x → 0.30.0 | NoiseModel basis_gates | `basis_gates=[\"id\",\"u3\",\"cx\"]` | `basis_gates=[\"id\",\"rz\",\"sx\",\"cx\"]` | Moderada | Bajo (requiere verificación de compatibilidad) | [Aer 0.9.0 Upgrade Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Nueva característica | 0.28.x → 0.30.0 | AerSimulator parameter_binds | N/A | `backend.run(circuit, parameter_binds=[{theta: [0, 1.57]}])` | Baja | Bajo (opcional) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Deprecación de GPU method | 0.29.x → 0.30.0 | StatevectorSimulator | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | Baja | Bajo (cambio sintáctico) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Reestructuración de visualización | 0.27.x → 0.30.0 | plot_histogram | `from qiskit.tools.visualization import plot_histogram` | `from qiskit.visualization import plot_histogram` | Baja | Bajo (cambio de import) | [Terra 0.17.0 Release Notes](https://github.com/Qiskit/qiskit-terra/releases/tag/0.17.0) |\n| Actualización de transpiler | 0.26.x → 0.30.0 | PassManager | `PassManager(passes=[...])` | `PassManager([...], max_iteration=1000)` | Moderada | Moderado (nuevos parámetros obligatorios) | [Terra 0.18.0 Changelog](https://github.com/Qiskit/qiskit-terra/blob/main/CHANGELOG.md#0180) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743454154,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 919,
+    "prompt_tokens": 3814,
+    "total_tokens": 4733,
+    "prompt_tokens_details": {
+      "cached_tokens": 3776
+    },
+    "prompt_cache_hit_tokens": 3776,
+    "prompt_cache_miss_tokens": 38
+  },
+  "temperature": 0.5,
+  "max_tokens": 2500,
+  "stream": false
+}

@@ -1,0 +1,31 @@
+{
+  "id": "b8c63a2c-4dd0-4211-b746-ffeaf4360a87",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio | Versiones (Origen→Destino) | Artefactos Afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n|----------------|---------------------------|----------------------|----------------------|-----------------------|------------|----------------|-------------|\n| Deprecación | 0.18.x → 0.30.0 | `qiskit.providers.aer.extensions` (snapshot) | `circuit.snapshot('state')` | `circuit.save_statevector()` | Moderada | QSE (requiere reescritura de circuitos) | [Aer 0.9.0 Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Reestructuración | 0.18.x → 0.30.0 | `NoiseModel` (basis_gates) | `NoiseModel(basis_gates=[\"id\",\"u3\",\"cx\"])` | `NoiseModel(basis_gates=[\"id\",\"rz\",\"sx\",\"cx\"])` | Alta | QSE (cambios en modelos de ruido) | [Aer 0.9.0 Upgrade Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Migración de API | 0.18.x → 0.30.0 | `AerSimulator.run()` (parameter_binds) | `backend.run(circuit, params={...})` | `backend.run(circuit, parameter_binds=[...])` | Moderada | SE (nuevo parámetro obligatorio) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Deprecación | 0.18.x → 0.30.0 | `PulseSimulator.run()` (system_model) | `backend.run(schedule, system_model)` | `backend.run(schedule)` | Baja | SE (parámetro posicional removido) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Actualización | 0.18.x → 0.30.0 | `AerSimulator` (GPU) | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | Baja | SE (cambio de nombre de opción) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Nueva característica | 0.18.x → 0.30.0 | `AerSimulator` (Dask) | N/A | `AerSimulator(executor=dask_client)` | Alta | QSE (paralelización avanzada) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Cambio de formato | 0.18.x → 0.30.0 | `plot_error_map` (u2 → sx) | Visualización con `u2` | Visualización con `sx` | Nula | SE (actualización visual) | [Terra 0.18.3 Bug Fixes](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.3) |\n| Remoción | 0.18.x → 0.30.0 | `backend_options` (Aer) | `backend.run(..., backend_options={...})` | `backend.run(..., **options)` | Moderada | SE (migración a kwargs) | [Aer 0.9.0 Upgrade Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743452980,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 901,
+    "prompt_tokens": 3943,
+    "total_tokens": 4844,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 3559
+  },
+  "temperature": 0.2,
+  "max_tokens": 2500,
+  "stream": false
+}

@@ -1,0 +1,31 @@
+{
+  "id": "34a8d718-01ba-4947-81ff-310846d5a31d",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio | Versiones (Origen→Destino) | Artefactos Afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n|----------------|---------------------------|----------------------|----------------------|-----------------------|------------|----------------|-------------|\n| Reestructuración de módulos | 0.18.x → 0.30.0 | qiskit.providers.aer.extensions | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | Alta | Alto (Requiere refactorización de snapshots) | [Aer 0.9.0 Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Modificación de API | 0.18.x → 0.30.0 | AerSimulator.run() | `backend.run(qobj, backend_options={...})` | `backend.run(circuits, **run_options)` | Alta | Moderado (Cambio en flujo de ejecución) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Cambio en defaults | 0.18.x → 0.30.0 | NoiseModel | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | Moderada | Moderado (Afecta modelos de ruido existentes) | [Aer 0.9.0 Upgrade Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Nueva característica | 0.18.x → 0.30.0 | AerSimulator |  | `backend.run(circuits, parameter_binds=[{theta: [0, 1.57, 3.14]}])` | Moderada | Bajo (Nueva funcionalidad) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Deprecación | 0.18.x → 0.30.0 | StatevectorSimulator | `backend.set_options(method='statevector_gpu')` | `backend.set_options(device='GPU')` | Baja | Bajo (Cambio sintáctico) | [Aer 0.9.0 Deprecation Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Migración de funciones | 0.18.x → 0.30.0 | PulseSimulator | `backend.run(schedule)` | `backend.run(circuit)` | Baja | Bajo (Ampliación de soporte) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Actualización | 0.18.x → 0.30.0 | AerSimulator |  | `backend = AerSimulator(max_job_size=1, executor=custom_executor)` | Alta | Alto (Paralelización avanzada) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| Cambio en formato de retorno | 0.18.x → 0.30.0 | AerSimulator | `job.result()` (single circuit) | `job.result()` (AerJobSet para múltiples circuitos) | Moderada | Moderado (Manejo de resultados) | [Aer 0.9.0 New Features](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743453962,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 902,
+    "prompt_tokens": 3814,
+    "total_tokens": 4716,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 3430
+  },
+  "temperature": 0.1,
+  "max_tokens": 2500,
+  "stream": false
+}

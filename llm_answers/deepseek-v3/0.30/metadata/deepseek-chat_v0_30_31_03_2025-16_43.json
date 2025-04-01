@@ -1,0 +1,31 @@
+{
+  "id": "30626ae7-322b-432b-84bc-fb466aaa536d",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo de Cambio               | Versiones (Origen→Destino) | Artefactos Afectados                     | Código Pre-Migración                          | Código Post-Migración                         | Dificultad  | Impacto SE/QSE                     | Referencias |\n|------------------------------|---------------------------|------------------------------------------|-----------------------------------------------|-----------------------------------------------|-------------|------------------------------------|-------------|\n| **Deprecación**              | 0.18.x → 0.30.0           | `u3` en `QuantumCircuit`                 | `circuit.u3(theta, phi, lambda, qubit)`       | `circuit.rx(theta, qubit)` + `circuit.rz(phi, qubit)` | Moderada    | Alto (cambios en circuitos existentes) | [Release Notes](https://github.com/Qiskit/qiskit-terra/releases/tag/0.18.0) |\n| **Reestructuración**         | 0.20.x → 0.30.0           | `qiskit.providers.aer.extensions` (snapshots) | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | Baja        | Moderado (requiere reemplazo de funciones) | [Changelog](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| **Nueva Característica**     | 0.25.x → 0.30.0           | `AerSimulator` con Dask                  | `backend.run(circuits)`                       | `backend = AerSimulator(executor=dask_client)` | Alta        | Bajo (opcional para HPC)           | [Docs](https://qiskit.org/documentation/stubs/qiskit.providers.aer.AerSimulator.html) |\n| **Migración de Paquete**     | 0.28.x → 0.30.0           | `qiskit.visualization.plot_histogram`    | `from qiskit import visualization`            | `from qiskit_visualization import plot_histogram` | Moderada    | Alto (requiere pip install adicional) | [Migration Guide](https://qiskit.org/documentation/migration-guides.html) |\n| **Cambio de Defaults**       | 0.18.x → 0.30.0           | `NoiseModel` (basis gates)               | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])`  | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | Baja        | Moderado (afecta ruido simulado)   | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| **Actualización de API**     | 0.22.x → 0.30.0           | `Parameter` en `QuantumCircuit`          | `circuit.bind_parameters({param: value})`     | `backend.run(circuit, parameter_binds=[{param: values}])` | Alta        | Alto (nuevo flujo de parámetros)   | [Docs](https://qiskit.org/documentation/stubs/qiskit.providers.aer.AerSimulator.run.html) |\n| **Remoción**                 | 0.25.x → 0.30.0           | `backend_options` en `AerSimulator.run()`| `backend.run(circuits, backend_options={...})`| `backend.run(circuits, **kwargs)`             | Baja        | Bajo (sintaxis obsoleta)           | [Changelog](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| **Nueva Característica**     | 0.29.x → 0.30.0           | `PulseSimulator` con `QuantumCircuit`    | `backend.run(schedule)`                       | `backend.run(circuit)`                        | Moderada    | Bajo (automatización de scheduling)| [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743450147,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 958,
+    "prompt_tokens": 3649,
+    "total_tokens": 4607,
+    "prompt_tokens_details": {
+      "cached_tokens": 640
+    },
+    "prompt_cache_hit_tokens": 640,
+    "prompt_cache_miss_tokens": 3009
+  },
+  "temperature": 0.3,
+  "max_tokens": 3000,
+  "stream": false
+}
