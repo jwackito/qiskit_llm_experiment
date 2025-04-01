@@ -1,0 +1,31 @@
+{
+  "id": "cad84029-ec90-4b5a-b2b8-8198cf6f403d",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "Aquí está la tabla Markdown exhaustiva con los escenarios de migración para Qiskit 0.30.0:\n\n```markdown\n| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de `backend_options` en método `run()` de backends Aer | `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, `UnitarySimulator` | `backend.run(circuit, backend_options={'shots': 1000})` | `backend.run(circuit, shots=1000)` | **Moderada** _(refactorización de parámetros)_ | **SE** _(cambios en llamadas a backend)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Snapshot instructions en `qiskit.providers.aer.extensions` | `qiskit.providers.aer.extensions` | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | **Baja** _(cambio de importación)_ | **SE** _(migración a nuevo módulo)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Cambio de basis gates default en `NoiseModel` | `NoiseModel`, backends IBMQ | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | **Baja** _(cambio de parámetro)_ | **QSE** _(afecta modelos de ruido existentes)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de `method='GPU'` en `StatevectorSimulator` | `StatevectorSimulator`, `UnitarySimulator` | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | **Baja** _(renombrado de parámetro)_ | **SE** _(cambio en configuración)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.18.x** → **0.30.0** | Soporte para `parameter_binds` en `AerSimulator.run()` | `AerSimulator`, `QuantumCircuit` |  | `backend.run(circuit, parameter_binds=[{theta: [0, 3.14, 6.28]}])` | **Moderada** _(nueva API)_ | **SE** _(nuevo flujo de ejecución paramétrica)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.18.x** → **0.30.0** | Soporte para ejecución paralela con Dask | `AerSimulator`, `Dask` |  | `backend = AerSimulator(max_job_size=1, executor=custom_executor)` | **Alta** _(nueva dependencia opcional)_ | **QSE** _(requiere configuración de cluster)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Soporte para `QuantumCircuit` en `PulseSimulator` | `PulseSimulator`, `QuantumCircuit` | `backend.run(schedule)` | `backend.run(circuit)` | **Moderada** _(nuevo tipo de input)_ | **SE** _(ampliación de capacidades)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de qobj ensamblado en `run()` | `AerSimulator`, `QasmSimulator` | `backend.run(qobj)` | `backend.run(circuits, **run_options)` | **Moderada** _(cambio de flujo)_ | **SE** _(refactorización necesaria)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Errores cuánticos no-locales en `NoiseModel` | `NoiseModel` | `noise_model.add_nonlocal_quantum_error()` | _(Implementar con transpiler passes)_ | **Alta** _(requiere reimplementación)_ | **QSE** _(cambio en modelo de ruido)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743550979,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1292,
+    "prompt_tokens": 4518,
+    "total_tokens": 5810,
+    "prompt_tokens_details": {
+      "cached_tokens": 4480
+    },
+    "prompt_cache_hit_tokens": 4480,
+    "prompt_cache_miss_tokens": 38
+  },
+  "temperature": 0.0,
+  "max_tokens": 3000,
+  "stream": false
+}

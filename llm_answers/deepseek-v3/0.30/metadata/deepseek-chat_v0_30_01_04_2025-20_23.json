@@ -1,0 +1,31 @@
+{
+  "id": "3dc66b2d-c999-414f-976b-feee7e01e1fc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "Aquí tienes la tabla Markdown exhaustiva con los escenarios de migración para Qiskit 0.30.0:\n\n```markdown\n| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |\n| Deprecación | **0.18.x** → **0.30.0** | Deprecación de `backend_options` en método `run()` de backends Aer | `AerSimulator.run()`, `QasmSimulator.run()`, `StatevectorSimulator.run()`, `UnitarySimulator.run()` | `backend.run(circuits, backend_options={'shots': 1000})` | `backend.run(circuits, shots=1000)` | **Moderada** _(cambio en parámetros)_ | **SE** _(requiere actualizar llamadas a run())_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Deprecación de instrucciones snapshot en `qiskit.providers.aer.extensions` | `qiskit.providers.aer.extensions.snapshot` | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveStatevector` | **Moderada** _(nuevo módulo)_ | **SE** _(requiere cambiar imports)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Cambio en basis gates por defecto en `NoiseModel` | `NoiseModel`, `basis_gates` | `NoiseModel(basis_gates=None)` _(default: [\"id\", \"u3\", \"cx\"])_ | `NoiseModel(basis_gates=None)` _(default: [\"id\", \"rz\", \"sx\", \"cx\"])_ | **Baja** _(cambio interno)_ | **QSE** _(puede afectar simulaciones de ruido)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Deprecación de `system_model` como argumento posicional en `PulseSimulator.run()` | `PulseSimulator.run()` | `backend.run(system_model, schedules)` | `backend.run(schedules, system_model=system_model)` | **Baja** _(cambio en signature)_ | **SE** _(requiere actualizar llamadas)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.18.x** → **0.30.0** | Soporte para `parameter_binds` en `AerSimulator.run()` | `AerSimulator.run()`, `Parameter` |  | `backend.run(circuit, parameter_binds=[{theta: [0, 1.57, 3.14]}])` | **Moderada** _(nueva API)_ | **SE** _(nuevo flujo de trabajo)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Soporte para `QuantumCircuit` en `PulseSimulator` | `PulseSimulator.run()`, `QuantumCircuit` | `backend.run(schedule)` | `backend.run(circuit)` _(auto-conversión a schedule)_ | **Baja** _(extensión de funcionalidad)_ | **SE** _(mayor flexibilidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Deprecación de `method='GPU'` en `StatevectorSimulator` | `StatevectorSimulator`, `UnitarySimulator` | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | **Baja** _(renombrado)_ | **SE** _(cambio en configuración)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Soporte para `SXdgGate` y `CUGate` en backends Aer | `AerSimulator`, `QasmSimulator`, `SXdgGate`, `CUGate` |  | `circuit.sxdg(0)`<br>`circuit.cu(0.1, 0.2, 0.3, 0.4, 0, 1)` | **Baja** _(nuevas gates soportadas)_ | **QSE** _(mayor cobertura de gates)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Soporte para `PauliGate` en todos los métodos de simulación | `AerSimulator`, `PauliGate` |  | `circuit.append(PauliGate('XYZ'), [0,1,2])` | **Baja** _(extensión de soporte)_ | **QSE** _(mayor cobertura de gates)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743549754,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1377,
+    "prompt_tokens": 4518,
+    "total_tokens": 5895,
+    "prompt_tokens_details": {
+      "cached_tokens": 4480
+    },
+    "prompt_cache_hit_tokens": 4480,
+    "prompt_cache_miss_tokens": 38
+  },
+  "temperature": 0.0,
+  "max_tokens": 3000,
+  "stream": false
+}

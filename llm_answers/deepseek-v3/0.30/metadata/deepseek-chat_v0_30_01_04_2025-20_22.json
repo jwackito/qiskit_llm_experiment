@@ -1,0 +1,31 @@
+{
+  "id": "02dd96b0-8870-4a7a-86d7-84af748cb76e",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "Aquí tienes la tabla Markdown exhaustiva con los escenarios de migración para Qiskit 0.30.0:\n\n```markdown\n| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de `backend_options` en método `run` de backends Aer | `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, `UnitarySimulator` | `backend.run(circuit, backend_options={'shots': 1000})` | `backend.run(circuit, shots=1000)` | **Moderada** _(requiere actualizar parámetros)_ | **SE** _(refactorización de llamadas a backend)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de `system_model` como argumento posicional en `PulseSimulator.run()` | `PulseSimulator` | `backend.run(schedule, system_model)` | `backend.run(schedule, system_model=system_model)` | **Baja** _(cambio de sintaxis)_ | **SE** _(actualización de llamadas)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de instrucciones `snapshot` en `qiskit.providers.aer.extensions` | `qiskit.providers.aer.extensions` | `circuit.snapshot('state')` | `circuit.save_state()` | **Moderada** _(cambio de API)_ | **SE** _(migración a nuevas instrucciones)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Cambio en puertas base predeterminadas para `NoiseModel` | `NoiseModel` | `NoiseModel(basis_gates=['id', 'u3', 'cx'])` | `NoiseModel(basis_gates=['id', 'rz', 'sx', 'cx'])` | **Baja** _(cambio de configuración)_ | **QSE** _(afecta modelos de ruido existentes)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.18.x** → **0.30.0** | Soporte para ejecución paralela con Dask en backends Aer | `AerSimulator`, `Dask` |  | `backend = AerSimulator(max_job_size=1, executor=custom_executor)` | **Alta** _(nueva configuración requerida)_ | **QSE** _(integración con HPC)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.18.x** → **0.30.0** | Soporte para `parameter_binds` en `AerSimulator.run()` | `AerSimulator`, `Parameter` |  | `backend.run(circuit, parameter_binds=[{theta: [0, 3.14, 6.28]}])` | **Moderada** _(nuevo parámetro)_ | **SE** _(nuevo flujo de ejecución)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Soporte para `QuantumCircuit` en `PulseSimulator` | `PulseSimulator`, `QuantumCircuit` |  | `backend.run(circuit)` | **Baja** _(extensión de funcionalidad)_ | **SE** _(mayor flexibilidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de `method='GPU'` en `StatevectorSimulator` | `StatevectorSimulator` | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | **Baja** _(renombrado de parámetro)_ | **SE** _(actualización de configuraciones)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.18.x** → **0.30.0** | Uso de qobj en `AerSimulator.run()` | `AerSimulator`, `qobj` | `backend.run(qobj)` | `backend.run(circuits)` | **Alta** _(cambio de flujo de trabajo)_ | **SE** _(refactorización mayor)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.18.x** → **0.30.0** | Adición de `SXdgGate` y `CUGate` a puertas base soportadas | `AerSimulator`, `SXdgGate`, `CUGate` |  | `circuit.sxdg(0)` | **Nula** _(extensión transparente)_ | **SE** _(nuevas puertas disponibles)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743549665,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1396,
+    "prompt_tokens": 4518,
+    "total_tokens": 5914,
+    "prompt_tokens_details": {
+      "cached_tokens": 4480
+    },
+    "prompt_cache_hit_tokens": 4480,
+    "prompt_cache_miss_tokens": 38
+  },
+  "temperature": 0.0,
+  "max_tokens": 3000,
+  "stream": false
+}

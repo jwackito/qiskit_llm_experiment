@@ -219,15 +219,16 @@ def obtener_parametrizacion(model, messages, temperature):
     # Payload deepseek-v3
     payload = {
         "model": model,             # Modelo LLM objetivo
-        "messages":messages,
+        "messages":messages,		# Prompts de usuario y sistema
         "temperature": temperature, # Máxima fidelidad al formato
-        "top_p": 0.05,              # Enfoque ultra-estricto en sintaxis MD
-        "max_tokens": 4000,         # Capacidad para tablas complejas +30 filas
+        "top_p": 0.01,              # Evita el sampling estocástico
+        "max_tokens": 3000,         # Capacidad para tablas complejas +30 filas
         "frequency_penalty": 1.2,   # Eliminar repetición de headers
         "presence_penalty": 0.9,  	# Incentivar contenido nuevo por fila 
-        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```"],   # Prevenir markdown adicional
+        "stop": ["###", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```", "### Notas"],   # Prevenir markdown adicional
         "n": 1, 
-        "stream": False, 
+        "stream": False,
+        "seed": 123 
     }
     
     '''

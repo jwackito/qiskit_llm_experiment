@@ -48,20 +48,7 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
         }
     ]
 
-    ##payload = obtener_parametrizacion(model=model, messages=messages, temperature=temperature)
-    # Payload deepseek-v3
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages":messages,
-        "temperature": temperature, # Máxima fidelidad al formato
-        "top_p": 0.05,              # Enfoque ultra-estricto en sintaxis MD
-        "max_tokens": 3000,         # Capacidad para tablas complejas +30 filas
-        "frequency_penalty": 1.2,   # Eliminar repetición de headers
-        "presence_penalty": 0.9,  	# Incentivar contenido nuevo por fila 
-        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```"],   # Prevenir markdown adicional
-        "n": 1, 
-        "stream": False, 
-    }
+    payload = obtener_parametrizacion(model, messages, temperature)
 
     try:
         
@@ -74,15 +61,16 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             model=payload['model'], 
             messages=payload['messages'], 
             temperature=payload['temperature'],
-            #top_p=payload['top_p'],
-            #max_tokens=payload['max_tokens'],
+            top_p=payload['top_p'],
+            max_tokens=payload['max_tokens'],
             #presence_penalty=payload['presence_penalty'],
             #frequency_penalty=payload['frequency_penalty'],
             #response_format=payload['response_format'],
             #system_prompt_ratio=payload['system_prompt_ratio'],
             #stop=payload['stop'],
-            #n=payload['n'],
-            stream=payload['stream']
+            n=payload['n'],
+            stream=payload['stream'],
+            seed=payload['seed']
         )
         
         #print(completion.choices[0].message.content)
