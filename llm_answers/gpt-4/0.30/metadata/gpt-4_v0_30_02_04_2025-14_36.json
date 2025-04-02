@@ -1,0 +1,42 @@
+{
+  "id": "chatcmpl-BHwIcYMLdC0AjDjI0jqIIbN2xlgjl",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para N-qubit Pauli gate en todos los métodos de simulación de `AerSimulator` y `QasmSimulator` | `AerSimulator`, `QasmSimulator`, `qiskit.circuit.library.generalized_gates.PauliGate` | | | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para ejecución paralela de múltiples circuitos en un clúster HPC | `AerSimulator`, `QasmSimulator`, `concurrent.futures`, `Dask` | | | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para grabar datos de registro para el método de simulación `matrix_product_state` | `AerSimulator`, `QasmSimulator`, `matrix_product_state` | | | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | `run()` ahora acepta `parameter_binds` para proporcionar una lista de valores para cualquier parámetro no vinculado en el circuito entrante | `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, `UnitarySimulator`, `run()`, `parameter_binds` | | ",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": []
+      }
+    }
+  ],
+  "created": 1743615378,
+  "model": "gpt-4-0613",
+  "object": "chat.completion",
+  "service_tier": "default",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 536,
+    "prompt_tokens": 4434,
+    "total_tokens": 4970,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    }
+  },
+  "temperature": 0.1,
+  "top_p": 0.1,
+  "max_tokens": 2500,
+  "n": 1,
+  "stream": false,
+  "seed": 12345
+}

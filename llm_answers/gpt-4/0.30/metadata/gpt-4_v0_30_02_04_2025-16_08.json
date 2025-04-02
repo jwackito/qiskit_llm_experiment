@@ -1,0 +1,41 @@
+{
+  "id": "chatcmpl-BHxj4hVf0xg53UtMHs3ml2X3i4zWu",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------: | :------------------- | :-------------------- | :--------: | :------------: | :---------- |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para `set_matrix_product_state` en Aer | Aer 0.9.0 | | `backend.set_matrix_product_state()` | **Nula** _(nueva funcionalidad)_ | **QSE** _(afecta simulaciones cuánticas)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para `SXdgGate` y `CUGate` en Aer | Aer 0.9.0 | | `from qiskit.circuit.library import SXdgGate, CUGate` | **Nula** _(nueva funcionalidad)_ | **QSE** _(afecta simulaciones cuánticas)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para N-qubit Pauli gate en Aer | Aer 0.9.0 | | `from qiskit.circuit.library.generalized_gates import PauliGate` | **Nula** _(nueva funcionalidad)_ | **QSE** _(afecta simulaciones cuánticas)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para ejecución paralela de circuitos en Aer | Aer 0.9.0 | | `backend = AerSimulator(max_job_size=1, executor=custom_executor); job = backend.run(circuits)` | **Alta** _(requiere configuración de ejecución paralela)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para registro de datos de logging para el método `matrix_product_state` en Aer | Aer 0.9.0 | | `backend.set_options(mps_log_data=True)` | **Nula** _(nueva funcionalidad)_ | **SE** _(afecta la depuración de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para `parameter_binds` en el método `run()` de Aer | Aer 0.9.0 | | `backend.run(circuit, shots=shots, parameter_binds=parameter_binds).result()` | **Nula** _(nueva funcionalidad)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para `QuantumCircuit` en el método `run()` de `PulseSimulator` | Aer 0.9.0 | | `backend.run(circuit)` | **Nula** _(nueva funcionalidad)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Cambio de Default | **0.29.x** → **0.30.0** | Cambio de base por defecto en `NoiseModel` | Aer 0.9.0 | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | **Baja** _(cambio de parámetros)_ | **SE** _(afecta la configuración de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación de `backend_options` en el método `run` de Aer | Aer 0.9.0 | `backend.run(circuits, backend_options=options)` | `backend.run(circuits, **options)` | **Baja** _(cambio de parámetros)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación de `system_model` como argumento posicional en el método `run` de `PulseSimulator` | Aer 0.9.0 | `backend.run(circuits, system_model)` | `backend.run(circuits, system_model=system_model)` | **Baja** _(cambio de parámetros)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación de pasar un qobj ensamblado directamente al método `run()` de los backends de Aer | Aer 0.9.0 | `backend.run(qobj)` | `backend.run(circuits, **run_options)` | **Moderada** _(requiere transpilación de circuitos)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación de todas las instrucciones de instantánea en `qiskit.providers.aer.extensions` | Aer 0.9.0 | `from qiskit.providers.aer.extensions import Snapshot` | `from qiskit.providers.aer.library import SaveState` | **Moderada** _(requiere cambio de módulo)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación de agregar errores cuánticos no locales a un `NoiseModel` | Aer 0.9.0 | `noise_model.add_nonlocal_quantum_error(error, [\"u3\"], [0], [1])` | `circuit.append(error, [0, 1])` | **Alta** _(requiere refactorización de código)_ | **SE** _(afecta la ejecución de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Deprecación del uso de la opción `method` de `StatevectorSimulator` y `UnitarySimulator` para ejecutar una simulación GPU | Aer 0.9.0 | `backend.set_options(method=\"statevector_gpu\")` | `backend.set_options(device=\"GPU\")` | **Baja** _(cambio de parámetros)_ | **SE** _(afecta la configuración de software)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": []
+      }
+    }
+  ],
+  "created": 1743620862,
+  "model": "gpt-4-0613",
+  "object": "chat.completion",
+  "service_tier": "default",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 1806,
+    "prompt_tokens": 4663,
+    "total_tokens": 6469,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    }
+  },
+  "temperature": 0.1,
+  "max_tokens": 2500,
+  "n": 1,
+  "stream": false,
+  "seed": 12345
+}

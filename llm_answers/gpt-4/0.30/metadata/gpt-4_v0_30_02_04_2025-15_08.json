@@ -1,0 +1,41 @@
+{
+  "id": "chatcmpl-BHwmRRLWpbQXAfQzoXyfrFhBe5ziQ",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |\n| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------: | :------------: | :---------- |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para N-qubit Pauli gate en todos los métodos de simulación de AerSimulator y QasmSimulator | `qiskit.circuit.library.generalized_gates.PauliGate`, `AerSimulator`, `QasmSimulator` | | ```python from qiskit.circuit.library.generalized_gates import PauliGate``` | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para ejecución paralela de múltiples circuitos en un cluster HPC | `AerSimulator`, `QasmSimulator`, `concurrent.futures`, `Dask` | | ```python from concurrent.futures import ThreadPoolExecutor; backend = AerSimulator(max_job_size=1, executor=ThreadPoolExecutor())``` | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Nueva Funcionalidad | **0.29.x** → **0.30.0** | Soporte para grabar datos de registro para el método de simulación `matrix_product_state` | `AerSimulator`, `QasmSimulator`, `matrix_product_state` | | ```python backend = AerSimulator(mps_log_data=True)``` | **Alta** _(nueva funcionalidad)_ | **QSE** _(requiere aprender nueva funcionalidad)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | El método `run()` para `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, y `UnitarySimulator` tiene un nuevo kwarg, `parameter_binds` | `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, `UnitarySimulator`, `parameter_binds` | ```python backend.run(circuit, shots=shots)``` | ```python backend.run(circuit, shots=shots, parameter_binds=[{theta: [0, 3.14, 6.28]}])``` | **Moderada** _(requiere refactorización de código)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | `PulseSimulator` ahora puede tomar objetos `QuantumCircuit` en el método `run()` | `PulseSimulator`, `QuantumCircuit` | ```python backend.run(schedule)``` | ```python backend.run(circuit)``` | **Moderada** _(requiere refactorización de código)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Pasar un qobj ensamblado directamente al método `run()` de los backends del simulador Aer ha sido deprecado | `AerSimulator`, `QasmSimulator`, `run()` | ```python backend.run(qobj)``` | ```python backend.run(circuits, **run_options)``` | **Moderada** _(requiere refactorización de código)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Todas las instrucciones de instantánea en `qiskit.providers.aer.extensions` han sido deprecadas | `qiskit.providers.aer.extensions`, `qiskit.providers.aer.library` | ```python from qiskit.providers.aer.extensions import Snapshot``` | ```python from qiskit.providers.aer.library import SaveState``` | **Moderada** _(requiere refactorización de código)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Deprecación | **0.29.x** → **0.30.0** | Uso de la opción `method` de `StatevectorSimulator` y `UnitarySimulator` para ejecutar una simulación GPU ha sido deprecado | `StatevectorSimulator`, `UnitarySimulator`, `method` | ```python backend = StatevectorSimulator(method='statevector_gpu')``` | ```python backend = StatevectorSimulator(device='GPU')``` | **Baja** _(requiere cambio de parámetro)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | La base por defecto para la clase `NoiseModel` ha cambiado de `[\"id\", \"u3\", \"cx\"]` a `[\"id\", \"rz\", \"sx\", \"cx\"]` | `NoiseModel`, `basis_gates` | ```python NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])``` | ```python NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])``` | **Baja** _(requiere cambio de parámetro)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | Se eliminó el kwarg `backend_options` del método `run` de los backends Aer que fue deprecado en qiskit-aer 0.7 | `AerSimulator`, `QasmSimulator`, `run()`, `backend_options` | ```python backend.run(circuit, backend_options=options)``` | ```python backend.run(circuit, **options)``` | **Baja** _(requiere cambio de parámetro)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |\n| Actualización | **0.29.x** → **0.30.0** | Se eliminó pasar `system_model` como un argumento posicional para el método `run` del `PulseSimulator` | `PulseSimulator`, `run()`, `system_model` | ```python backend.run(system_model, circuit)``` | ```python backend.run(circuit, system_model=model)``` | **Baja** _(requiere cambio de parámetro)_ | **SE** _(requiere actualizar código existente)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30.0) |",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": []
+      }
+    }
+  ],
+  "created": 1743617227,
+  "model": "gpt-4-0613",
+  "object": "chat.completion",
+  "service_tier": "default",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 1704,
+    "prompt_tokens": 4613,
+    "total_tokens": 6317,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    }
+  },
+  "temperature": 0.1,
+  "max_tokens": 2500,
+  "n": 1,
+  "stream": false,
+  "seed": 12345
+}

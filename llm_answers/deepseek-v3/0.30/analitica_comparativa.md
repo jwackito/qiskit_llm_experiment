@@ -43,3 +43,6 @@ Resumen:
 - La taxonomía automatizada fue más específica en la descripción de la fuente de información.
 - La taxonomía automatizada fue más completa y eficiente en la descripción de ejemplos, aunque en ciertos casos (como el de optimizaciones internas) pueden replicarse y no tienen mucho sentido.
 
+
+Existen casos donde a pesar de configurar muy baja temperatura, dos invocaciones sucesivas "ecos" de la misma solicitud, pueden obtener tablas diferentes. El caso analizado como mayor diferencia fue un caso no hallado por cada tabla mutuamente y el resto diferencias sintácticas sin relevancia.
+

@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
     # Configurar el parser de argumentos
     parser = argparse.ArgumentParser(description="Extracción de documentación oficial Qiskit")
+    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default=os.getenv("MODEL"))
     parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default=os.getenv("DEFAULT_VERSION"))
     parser.add_argument("--inyecta_info_qrn", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=bool_conv(os.getenv("INYECTA_INFO_QRN", False)))
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("SCRAP_DIRECTORY"))
@@ -87,46 +88,42 @@ if __name__ == "__main__":
     parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("OPENAI_API_KEY"))
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default=os.getenv("MODEL_OUTPUT_DIRECTORY"))
     parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=bool_conv(os.getenv("REMOTE_INVOKE", False)))
-    parser.add_argument("--model", type=str, help="Modelo de OpenAI a ejecutar", default=os.getenv("MODEL"))
     parser.add_argument("--temperature", type=float, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=bool_conv(os.getenv("EJECUTAR_ETAPA_VERIFICACION", False)))
     parser.add_argument("--project_id", type=str, help="Clave del proyecto OpenAI", default=os.getenv("PROJECT_ID"))
 
     args = parser.parse_args()
 
-    # Construir la URL usando la versión proporcionada
     url_qiskit_release_notes = f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{args.version}"
-    
-    content = extract_main_content(url_qiskit_release_notes)
-    
-    if content:
+    downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
+    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
 
-        # Crear la carpeta "scrapped_content" si no existe
-        downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
-        if not os.path.exists(downloads_dir):
-            print(f"\n [INFO] Creando el directorio ... {downloads_dir}")
-            os.makedirs(downloads_dir)
-        
-        # Guardar el contenido en un archivo dentro de la carpeta "scrapped_content"
-        file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
-        print(f"\n[INFO] Sobreescribiendo el contenido de {obtener_ultimas_dos_secciones(file_path)} ..." if os.path.exists(file_path) else f"Guardando el contenido en {file_path} ...")
+    # Crear la carpeta "scrapped_content" si no existe
+    if not os.path.exists(downloads_dir):
+        print(f"\n [INFO] Creando el directorio ... {downloads_dir}")
+        os.makedirs(downloads_dir)
+
+    # Buscar contenido de qiskit release notes ... si no lo encuentra lo trae del sitio
+    path_acortado = obtener_ultimas_dos_secciones(file_path)
+    if not os.path.exists(file_path):
+        content = extract_main_content(url_qiskit_release_notes)
+
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
-        
-        print(f"\n[OK] Contenido obtenido desde {url_qiskit_release_notes} guardado en: {obtener_ultimas_dos_secciones(file_path)}")
+        print(f"\n[INFO] Documentación inexistente, obtenida desde {url_qiskit_release_notes} guardada en: {path_acortado}")
+    else:
+        print(f"\n[OK] Contenido de notas de liberación qiskit existente, obtenido desde: {path_acortado}")
 
-        if args.invoke_openai:
-            openai_response = invoke_openai(
-                version_objetivo = args.version, 
-                url_objetivo = url_qiskit_release_notes, 
-                url_openai_server_endpoint = args.url_openai_server_endpoint, 
-                openai_api_key = args.openai_api_key, 
-                usar_qiskit_release_notes = args.inyecta_info_qrn, 
-                model_answers_path = args.model_answers_path, 
-                model = args.model,
-                temperature = args.temperature,
-                project_id = args.project_id
-            )
+    if args.invoke_openai:
+        openai_response = invoke_openai(
+            version_objetivo = args.version, 
+            url_objetivo = url_qiskit_release_notes, 
+            url_openai_server_endpoint = args.url_openai_server_endpoint, 
+            openai_api_key = args.openai_api_key, 
+            usar_qiskit_release_notes = args.inyecta_info_qrn, 
+            model_answers_path = args.model_answers_path, 
+            project_id = args.project_id 
+        )
 
-        if args.verificacion:           
-            verificar_documentacion(content, args.version)
+    if args.verificacion:           
+        verificar_documentacion(content, args.version)

@@ -90,11 +90,10 @@ def obtener_ultimas_dos_secciones(ruta):
 
 def obtener_developer_prompt(version_objetivo, url_release_notes, url_changelog="https://github.com/qiskit/qiskit/releases/tag/{version}"):
 	return f'''
-		Eres un asistente experto en ingeniería de software cuántica, altamente capacitado en el ecosistema qiskit y sus liberaciones de versión.
+		Eres un asistente experto en ingeniería de software cuántica, altamente capacitado en el ecosistema qiskit y sus liberaciones de versión. 
         Genere una tabla Markdown con 9 columnas sobre migraciones en Qiskit:
 
-		| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |
-		| :------------- | :-------------- | :------ | :------------------- | :------------------- | :-------------------- | :--------- | :------------- | :---------- |
+		| Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias | | :- | :-: | :- | :- | :- | :- | :-: | :-: | :- |
 
 		- **Columnas:**
 		1. Tipo de Cambio (inserción, actualización, deprecación, cambio de estructura de módulos, nueva librería, etc)
@@ -102,16 +101,22 @@ def obtener_developer_prompt(version_objetivo, url_release_notes, url_changelog=
 		3. Descripción concisa del escenario y su propósito
         4. Artefactos software o hardware implicados (Clase, Objeto, método, parámetro, librería externa o dependencia, lenguaje, comando, herramientas externas, dependencias, módulos del ecosistema qiskit, etc.) ej: 'qiskit-aer', 'qiskit-ibm-runtime', 'pip', matplotlib, numpy, etc.
 		5/6. Código de ejemplo pre/post migración
-		7. Dificultad, con valores posibles:
-          	- `**Alta**`: implica cambios estructurales, complejos y relevantes
-            - `**Moderada**`: implica algunos pocos, sin demasiado trabajo de refactor
-            - `**Baja**`: implica modificación simple en el código, ej: renombrado de funciones o parametrizaciones
-            - `**Nula**`: sin impacto ni complejidad para migrar de versión, ej: mejora interna
-		8. Impacto en SE/QSE + justificación (opciones no excluyentes)
+		7. Dificultad, representa la dificultad asociada al escenario de migración, con valores posibles:
+          	7.1 `**Alta**`: implica cambios estructurales, complejos y relevantes
+            7.2 `**Moderada**`: implica algunos pocos, sin demasiado trabajo de refactor
+            7.3 `**Baja**`: implica modificación simple en el código, ej: renombrado de funciones o alteración de parametrizaciones
+            7.4 `**Nula**`: sin impacto ni complejidad para migrar de versión, ej: mejora interna o nueva funcionalidad
+            - Agregar una breve justificación
+		8. Impacto asociado a la ingeniería de software clasica (SE) o cuántica (QSE), con valores posibles:
+            8.1 `**QSE**`: afecta a la ing. de software cuántica, ej: compuertas, transpilación, primitivas, topologías, siumladores, etc.
+            8.2 `**SE**`: afecta a la ing. de software clásica, ej: migración de módulos, jerarquía de clases, modularización de componentes, etc. 
+            - Agregar una breve justificación
+            - Estas opciones no son exclusivas, es decir, un mismo escenario puede agrupar ambas
 		9. Enlaces oficiales validados
 
 		**Restricciones críticas:**
-        - **Fuente de información primordial**, el usuario la indicará entre etiquetas `**<qrn></qrn>**`
+        - **Fuente de información primordial a considerar**, el usuario la indicará entre triple comillas (```)
+        - **No admitas escenarios replicados**, nunca una fila de la tabla puede coincidir en columnas "Tipo de Cambio", "Resumen" y "Artefactos afectados"
 		- **Formato**:
           	- **Respuesta esperada, una única tabla con sintaxis Markdown válida**
             - Columna 5/6, sólo con **código python válido**
@@ -120,11 +125,11 @@ def obtener_developer_prompt(version_objetivo, url_release_notes, url_changelog=
                - versión de origen ≥ 0.05.x y versión destino ≤ {version_objetivo}.0
             - Columna 7. "Dificultad", con formato: **`Alta`/`Moderada`/`Baja`/`Nula`** _(breve descripción justificativa)_ Ej: **Alta** _(requiere la instalación de paquetes)_
             - Columna 8. "Referencias", con formato: **`Release Notes`/`Changelog GitHub`/`Documentation oficial`/`Migration Guides`**, si hay más de una, separadas por salto de línea
-            - **Descripción extensiva y exhaustiva de scenarios atómicos**, 1 cambio por fila incluso si:
+            - **Descripción abarcativa, exhaustiva y completa de todos los scenarios descriptos atómicamente**, 1 cambio por fila incluso si:
 				- Afecta un mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`)
             	- Coincide el "Tipo de Cambio": no permitir listados con "<br>+", "•" u otros separadores internos en una celda
                	- Si un cambio implica múltiples aspectos (ej: deprecación + migración), crear filas separadas
-		- **Celdas opcionales**:
+		- **Celdas opcionales**, utiliza ejemplos validados pero si no encuentra mantenlas vacías:
           	- Columna 5. "Código Pre-Migración"
             - Columna 6. "Código Post-Migración"
 		- **Columna 8. "Referencias"**
@@ -135,22 +140,20 @@ def obtener_developer_prompt(version_objetivo, url_release_notes, url_changelog=
                 3. Documentation oficial (_`https://docs.quantum.ibm.com/`_)
                 4. Migration Guides (_`https://docs.quantum.ibm.com/migration-guides`_)
             - No usar documentación histórica pre-{version_objetivo}.0, ni secciones: "Prelude" o "Bug Fixes"
+            - Intenta enunciar todas las referencias halladas específicamente, no te limites a una sola, si existen varias, enuncialas
 		- **Exclusiones**:
           	- Bug Fixes, errores en versiones menores, escenarios hipotéticos y cambios sin documentacion oficial de respaldo
             - Texto contenido por fuera de la tabla solicitada, sin wrappers adicionales
-    	- **Ordenamiento**, ordenar filas primero por Columna 7. "Dificultad" (Alta → Moderada → Baja → Nula), luego por Columna 8. "Impacto SE/QSE" (QSE → SE)"
-                  
-        - Ejemplo de filas en la tabla:
-        | Nueva Librería | **0.45.x** → **1.0.0** | Introducción de librería: `qiskit-dynamics` para simulaciones | módulo: `qiskit-dynamics`, 'requirements.txt' |  | `from qiskit_dynamics import Solver` | **Alta** _(nueva dependencia)_ | **QSE** _(requiere actualizar entornos)_ | [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) | 
-        | Deprecación | **0.19.x** → **1.0.0** | Uso de `qiskit.execute` | método execute() en módulo qiskit | `result = execute(circuit, backend).result()` | `from qiskit import transpile; job = backend.run(transpile(circuit, backend))` | **Moderada** _(nuevo flujo de ejecución)_ | **SE** _(requiere refactorizar workflows)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#1.0.0), [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) |  
+        - **Ejemplo paradigmático de filas en la tabla**:
+        	| Nueva Librería | **0.45.x** → **1.0.0** | Introducción de librería: `qiskit-dynamics` para simulaciones | módulo: `qiskit-dynamics`, `requirements.txt` |  | `from qiskit_dynamics import Solver` | **Alta** _(nueva dependencia)_ | **QSE** _(requiere actualizar entornos)_ | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#1.0.0) [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) |  
 	'''
 
 def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, url_objetivo_qrn="https://docs.quantum.ibm.com/api/qiskit/release-notes"):
     return f'''
-		Genere una tabla Markdown exhaustiva para cada escenario de migración Qiskit para la versión destino: {version_objetivo}.0:
+		Genera una tabla Markdown lo más exhaustiva, abarcativa y completa posible, para cada escenario de migración Qiskit para la versión destino: {version_objetivo}.0:
 
         - **Fuente Primordial de información**:
-			**Qiskit Release Notes versión {version_objetivo}.0** {f": **<qrn>**{file_content}**</qrn>**" if inyectar_qiskit_release_notes else f"_{url_objetivo_qrn}_"}
+			**Qiskit Release Notes versión {version_objetivo}.0** {f": ```{file_content}```" if inyectar_qiskit_release_notes else f"_{url_objetivo_qrn}_"}
 
 		**Directivas de análisis:** 
 			1. **Escenarios** (filas de la tabla):
@@ -177,7 +180,7 @@ def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_co
 def apto_md(contenido):
     return contenido.replace("```markdown", "", 1).rstrip("```").strip()
 
-def guardar_metadata_completion(completion, path, filename, payload):
+def guardar_metadata_completion(completion, path, filename, params):
 
     path_metadata = os.path.join(path, "metadata")
     file_metadata_path = os.path.join(path_metadata, filename + ".json")
@@ -190,64 +193,50 @@ def guardar_metadata_completion(completion, path, filename, payload):
         completion_dict = completion.to_dict()
 
         # Añado la info de la solicitud
-        completion_dict["temperature"] = payload['temperature']
-        completion_dict["max_tokens"] = payload['max_tokens']
-        completion_dict["stream"] = payload['stream']
+        completion_dict["temperature"] = params['temperature']
+        #completion_dict["top_p"] = params['top_p']
+        completion_dict["max_tokens"] = params['max_tokens']
+        #completion_dict["frequency_penality"] = params['frequency_penality']
+        #completion_dict["presence_penality"] = params['presence_penality']
+        completion_dict["n"] = params['n']
+        completion_dict["stream"] = params['stream']
+        completion_dict["seed"] = params['seed']
 
         json.dump(completion_dict, f, indent=2, ensure_ascii=False)
         print(f"\n[OK] Archivo de metadata de solicitud 'completion' creado exitosamente en: {obtener_ultimas_dos_secciones(file_metadata_path)}")
 
-def obtener_parametrizacion(model, messages, temperature):
-    
-    '''
-    # Genérico -> chatGPT
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages": messages,       # Prompts del sistema y del usuario
-        "temperature": temperature, # Máxima precisión para datos estructurados 0.25 DeepSeek
-        #"top_p": 0.5,               # Balance entre cobertura y ruido
-        "max_tokens": 3000,         # Capacidad para ~20-25 filas
-        #"presence_penalty": 0.8,    # Evita redundancias en columnas
-        #"frequency_penalty": 0.9,   # ↓ repetición de términos técnicos (ej: "QuantumCircuit")
-        #"n": 1,                     # Cantiadad de respuestas resultantes
-        "stream": False,            # Modalidad de flujo de datos
-        #"stop": ["##", "<!--", "<!--END-->", "## Notas"]  # Delimitadores claros
-    }
+def obtener_parametrizacion():
 
-    '''
-    
-    # Payload deepseek-v3
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages":messages,		# Prompts de usuario y sistema
-        "temperature": temperature, # Máxima fidelidad al formato
-        "top_p": 0.01,              # Evita el sampling estocástico
-        "max_tokens": 3000,         # Capacidad para tablas complejas +30 filas
-        "frequency_penalty": 1.2,   # Eliminar repetición de headers
-        "presence_penalty": 0.9,  	# Incentivar contenido nuevo por fila 
-        "stop": ["###", "<!--", "<!--END-->", "## Notas", "**Nota**", "\n#", "```", "### Notas"],   # Prevenir markdown adicional
-        "n": 1, 
-        "stream": False,
-        "seed": 123 
-    }
-    
-    '''
-    # Payload deepseek-r1
-    payload = {
-        "model": model,             # Modelo LLM objetivo
-        "messages": messages,       # Prompts del sistema y del usuario
-        "temperature": 0.1,         # Maximizar precisión técnica
-        "top_p": 0.05,              # Enfoque estricto en fuentes oficiales
-        "max_tokens": 3000,         # Tamaño típico de tablas de migración
-        "frequency_penalty": 0.7,   # Reducir repetición en múltiples filas
-        "presence_penalty": 0.5,    # Garantizar cobertura de componentes requeridos
-        "stop": ["\n\n", "##", "<!--", "<!--END-->", "## Notas", "**Nota**"],   # Prevenir markdown adicional
-        "system_prompt_ratio": 0.6, # Priorizar estructura técnica
-        "stream": False,            # Modalidad de flujo de datos
-        "n": 1,                     # Cantiadad de respuestas resultantes
-    }
-    '''
-    return payload
+	return {
+		"model": os.getenv("MODEL", "gpt-4"),
+		"temperature": float(os.getenv("TEMPERATURE", 0.5)),
+		"top_p": float(os.getenv("TOP_P", 1.0)),
+		"max_tokens": int(os.getenv("MAX_TOKENS", 1000)),
+		"frequency_penalty": float(os.getenv("FREQUENCY_PENALTY", 0.0)),
+		"presence_penalty": float(os.getenv("PRESENCE_PENALTY", 0.0)),
+		"stop": json.loads(os.getenv("STOP", "[]")),
+		"n": int(os.getenv("N", 1)),
+		"stream": os.getenv("STREAM", "false").lower() == "true",
+		"seed": int(os.getenv("SEED", 42)),
+		"reasoning_effort": float(os.getenv("REASONING_EFFORT", 1.0))
+	}
+
+def guardar_respuesta(completion, llm_answers_dir, file_name):
+
+	file_answer_path = os.path.join(llm_answers_dir, file_name + ".md")
+	path_acortado = obtener_ultimas_dos_secciones(file_answer_path)
+
+	with open(file_answer_path, 'w', encoding='utf-8') as f:
+		# Asumiendo que 'completion' es un objeto de OpenAI u similar
+		contenido = completion.choices[0].message.content
+		if contenido:
+			f.write(apto_md(contenido))
+			print(f"\n[OK] Archivo guardado en: {path_acortado}")
+		else:
+			print("\n[ERROR] El contenido está vacío o no existe")
+                  
+	return path_acortado
+
 
 if __name__ == "__main__":
     

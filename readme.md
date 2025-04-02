@@ -81,16 +81,16 @@ Ejemplo de configuración (archivo .env):
 ## Información de tokens y caracteres de las notas de liberación
 
 	- prompt de sistema:
-    	- 5650 caracteres aprox.
-    	- 1300 tokens aprox.
+    	- 6550 caracteres aprox.
+    	- 2000 tokens aprox.
   
 	- prompt de usuario:
     	- 1760 caracteres aprox.
     	- 384 tokens aprox.
 
   	- A priori, los prompts sin información añadida rondan:
-    	- 7410 caracteres aprox.
-    	- 1684 tokens aprox.
+    	- 11730 caracteres aprox.
+    	- 3094 tokens aprox.
 
 
 | Version  |  Tamaño  | Cant. líneas | Cant. líneas no vacías | Cant. lineas dif. | Cant. caracteres (k) |Cant. diferencias | estabilidad de datos | # tokens Gemma | # tokens Qween |

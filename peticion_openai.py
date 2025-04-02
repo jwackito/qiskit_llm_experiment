@@ -2,16 +2,17 @@ import os
 from openai import OpenAI
 from datetime import datetime
 from utils import *
+from dotenv import load_dotenv
 
-def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, 
-                  usar_qiskit_release_notes, model_answers_path, model, temperature, project_id):
+def invoke_openai(
+    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id):
 
-    print(f'''\n[INFO] Invocación al modelo {model} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
+    print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {openai_api_key}",
-        "OpenAI-Project": {project_id}
+        "OpenAI-Project": project_id
     }
 
     # Ruta al archivo generado por el script previo
@@ -48,8 +49,6 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
         }
     ]
 
-    payload = obtener_parametrizacion(model, messages, temperature)
-
     try:
         
         client = OpenAI(
@@ -57,20 +56,23 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
             api_key=openai_api_key
         )
 
+        extra_params = obtener_parametrizacion()
+
         completion = client.chat.completions.create(
-            model=payload['model'], 
-            messages=payload['messages'], 
-            temperature=payload['temperature'],
-            top_p=payload['top_p'],
-            max_tokens=payload['max_tokens'],
-            #presence_penalty=payload['presence_penalty'],
-            #frequency_penalty=payload['frequency_penalty'],
-            #response_format=payload['response_format'],
-            #system_prompt_ratio=payload['system_prompt_ratio'],
-            #stop=payload['stop'],
-            n=payload['n'],
-            stream=payload['stream'],
-            seed=payload['seed']
+            model=extra_params['model'], 
+            messages=messages, 
+            temperature=extra_params['temperature'],
+            #top_p=extra_params['top_p'],
+            max_tokens=extra_params['max_tokens'],
+            #frequency_penalty=extra_params['frequency_penalty'],
+            #presence_penalty=extra_params['presence_penalty'],            
+            #response_format=extra_params['response_format'],
+            #system_prompt_ratio=extra_params['system_prompt_ratio'],
+            #stop=extra_params['stop'],
+            #n=extra_params['n'],
+            stream=extra_params['stream'],
+            seed=extra_params['seed'],
+            #reasoning_effort=extra_params['reasoning_effort'],
         )
         
         #print(completion.choices[0].message.content)
@@ -80,33 +82,19 @@ def invoke_openai(version_objetivo, url_objetivo, url_openai_server_endpoint, op
         if not os.path.exists(llm_answers_dir):
             os.makedirs(llm_answers_dir, exist_ok=True)
 
-        # Guardar el contenido en un archivo dentro de la carpeta configurada (default = "/llm_answers")
+        # Armado del nombre de archivo de respuesta
         fecha_hora = datetime.now().strftime("%d_%m_%Y-%H_%M")
         modelo_base = (
-            payload['model'].split('/', 1)[1] 
-            if '/' in payload['model'] 
-            else payload['model']
+            extra_params['model'].split('/', 1)[1] if '/' in extra_params['model'] else extra_params['model']
         )
-
         file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}"
 
-        guardar_metadata_completion(completion, llm_answers_dir, file_name, payload)
+        guardar_metadata_completion(completion, llm_answers_dir, file_name, params=extra_params)
 
-        # Guarda el contenido de la respuesta
-        file_answer_path = os.path.join(llm_answers_dir, file_name + ".md")
-        path_acortado = obtener_ultimas_dos_secciones(file_answer_path)
-
-        with open(file_answer_path, 'w', encoding='utf-8') as f:
-            # Asumiendo que 'completion' es un objeto de OpenAI u similar
-            contenido = completion.choices[0].message.content
-            if contenido:
-                f.write(apto_md(contenido))
-                print(f"\n[OK] Archivo creado exitosamente en: {path_acortado}")
-            else:
-                print("\n[ERROR] El contenido está vacío o no existe")
+        path = guardar_respuesta(completion, llm_answers_dir, file_name)
 
         if completion.choices[0].message.content:            
-            print(f"\n[OK] Respuesta desde OpenAI obtenida. Almacenada en: {path_acortado}\n")
+            print(f"\n[OK] Respuesta desde OpenAI obtenida. Almacenada en: {path}\n")
         else:
             print("\n[ERROR] No se pudo obtener una respuesta del modelo de OpenAI.\n")
 
