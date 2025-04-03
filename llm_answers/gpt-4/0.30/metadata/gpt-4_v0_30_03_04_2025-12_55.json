@@ -1,0 +1,41 @@
+{
+  "id": "chatcmpl-BIHAxDjfQLQtVNHcuHss4lPwE7WVc",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "| Change Type | Change Flow | Summary | Affected Artifacts | Pre-Migration Code | Post-Migration Code | Difficulty | SE/QSE Impact | References |\n| :- | :-: | :- | :- | :- | :- | :-: | :-: | :- |\n| API | **0.29.x** → **0.30.0** | Added support for set_matrix_product_state | `AerSimulator`, `set_matrix_product_state` | `backend = AerSimulator()`<br>`backend.set_matrix_product_state(state)` | `backend = AerSimulator()`<br>`backend.set_matrix_product_state(state)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Added support for SXdgGate and CUGate | `AerSimulator`, `SXdgGate`, `CUGate` | `backend = AerSimulator()`<br>`backend.add_gate(SXdgGate)`<br>`backend.add_gate(CUGate)` | `backend = AerSimulator()`<br>`backend.add_gate(SXdgGate)`<br>`backend.add_gate(CUGate)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Added support for N-qubit Pauli gate | `AerSimulator`, `QasmSimulator`, `PauliGate` | `backend = AerSimulator()`<br>`backend.add_gate(PauliGate)` | `backend = AerSimulator()`<br>`backend.add_gate(PauliGate)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Added support for custom executor and job splitting | `AerSimulator`, `max_job_size`, `executor` | `backend = AerSimulator()` | `backend = AerSimulator(max_job_size=1, executor=custom_executor)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Added ability to record logging data for the matrix_product_state simulation method | `AerSimulator`, `mps_log_data` | `backend = AerSimulator()` | `backend = AerSimulator(mps_log_data=True)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Added new kwarg, parameter_binds for the run() method | `AerSimulator`, `QasmSimulator`, `StatevectorSimulator`, `UnitarySimulator`, `parameter_binds` | `backend.run(circuit, shots=shots)` | `backend.run(circuit, shots=shots, parameter_binds=parameter_binds)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | PulseSimulator can now take QuantumCircuit objects on the run() | `PulseSimulator`, `QuantumCircuit` | `backend.run(schedule)` | `backend.run(circuit)` | **None** | **QSE** _(new feature)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Removed the backend_options kwarg from the run method | `AerSimulator`, `backend_options` | `backend.run(circuits, backend_options=options)` | `backend.run(circuits, **options)` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Removed passing system_model as a positional arg for the run method | `PulseSimulator`, `system_model` | `backend.run(circuits, system_model)` | `backend.run(circuits, system_model=model)` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Deprecated passing an assembled qobj directly to the run() method | `AerSimulator`, `qobj` | `backend.run(qobj)` | `backend.run(circuits, **run_options)` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Deprecated all snapshot instructions | `AerSimulator`, `snapshot` | `backend.snapshot()` | `backend.save()` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Deprecated adding non-local quantum errors to a NoiseModel | `NoiseModel`, `non-local quantum errors` | `noise_model.add_nonlocal_quantum_error(error, gate)` | `noise_model.add_quantum_error(error, gate, [qubits])` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |\n| API | **0.29.x** → **0.30.0** | Deprecated use of the method option to run a GPU simulation | `StatevectorSimulator`, `UnitarySimulator`, `method` | `backend = StatevectorSimulator(method='GPU')` | `backend = StatevectorSimulator(device='GPU')` | **Low** _(code modification)_ | **QSE** _(code updates)_ | [Release Notes](https://github.com/Qiskit/qiskit-aer/releases/tag/0.9.0) |",
+        "refusal": null,
+        "role": "assistant",
+        "annotations": []
+      }
+    }
+  ],
+  "created": 1743695627,
+  "model": "gpt-4-0613",
+  "object": "chat.completion",
+  "service_tier": "default",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 1511,
+    "prompt_tokens": 2178,
+    "total_tokens": 3689,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": 0,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cached_tokens": 0
+    }
+  },
+  "temperature": 0.1,
+  "max_tokens": 2500,
+  "n": 1,
+  "stream": false,
+  "seed": 42
+}

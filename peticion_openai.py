@@ -5,7 +5,7 @@ from utils import *
 from dotenv import load_dotenv
 
 def invoke_openai(
-    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id):
+    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma):
 
     print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
@@ -17,7 +17,7 @@ def invoke_openai(
 
     # Ruta al archivo generado por el script previo
     downloads_dir = os.path.join(os.getcwd(), "scraped_content")
-    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{version_objetivo}.md")
+    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{version_objetivo}_{idioma}.md")
 
     # Verificar si el archivo existe
     if not os.path.exists(file_path):
@@ -34,7 +34,7 @@ def invoke_openai(
             "content": [
                 {
                     "type": "text",
-                    "text": obtener_developer_prompt(url_objetivo, version_objetivo)
+                    "text": obtener_system_prompt(version_objetivo, idioma)
                 }
             ]
         },
@@ -43,7 +43,7 @@ def invoke_openai(
             "content": [
                 {
                     "type": "text",
-                    "text": obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, url_objetivo)
+                    "text": obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, idioma)
                 }
             ]
         }
