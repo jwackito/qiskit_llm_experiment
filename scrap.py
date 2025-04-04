@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from peticion_openai import invoke_openai
 from verificacion import verificar_documentacion
 from dotenv import load_dotenv
-from utils import obtener_ultimas_dos_secciones
+from utils import *
 
 def clean_content(soup):
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", type=float, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=bool_conv(os.getenv("EJECUTAR_ETAPA_VERIFICACION", False)))
     parser.add_argument("--project_id", type=str, help="Clave del proyecto OpenAI", default=os.getenv("PROJECT_ID"))
-    parser.add_argument("--idioma", type=str, help="Idioma de prueba", default=os.getenv("IDIOMA", "en"))
+    parser.add_argument("--idioma", type=str, help="Idioma de prueba", default=os.getenv("IDIOMA", "es"))
 
     args = parser.parse_args()
 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         content = extract_main_content(url_qiskit_release_notes)
 
         with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
+            f.write(content if args.idioma == "en" else traducir(content, args.idioma))
         print(f"\n[INFO] Documentación inexistente para versión {args.version} e idioma {"español" if args.idioma.lower == "es" else "inglés"}, obtenida desde {url_qiskit_release_notes} guardada en: {path_acortado}")
     else:
         print(f"\n[OK] Contenido de notas de liberación qiskit existente, obtenido desde: {path_acortado}")

@@ -1,0 +1,33 @@
+{
+  "id": "6f16f34e-f5ae-432c-934a-95d06a151c2b",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "Here is the comprehensive Markdown table for Qiskit Terra migration scenarios to version 0.30.0:\n\n| Exchange rate | Change flow | Summary | Affected artifacts | Pre-migration code | Post-migration code | Difficulty | Impact se/qse | References |\n| :- | :-: | :- | :- | :- | :- | :-: | :-: | :- |\n| Deprecation | 0.18.x → 0.30.0 | Deprecation of passing assembled qobj directly to run() | `AerSimulator.run()`, `QasmSimulator.run()`, `StatevectorSimulator.run()`, `UnitarySimulator.run()` | `backend.run(qobj)` | `backend.run(circuits, **run_options)` | Moderate (requires changing input format) | SE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Deprecation | 0.18.x → 0.30.0 | Deprecation of snapshot instructions | `qiskit.providers.aer.extensions` snapshot instructions | `circuit.snapshot('final')` | `circuit.save_state()` | Moderate (requires replacing instructions) | QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Deprecation | 0.18.x → 0.30.0 | Deprecation of non-local quantum errors in NoiseModel | `NoiseModel.add_nonlocal_quantum_error()` | `noise_model.add_nonlocal_quantum_error(error, gates, qubits)` | (Manual transpiler pass required) | High (requires custom implementation) | QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Deprecation | 0.18.x → 0.30.0 | Deprecation of GPU simulation via method option | `StatevectorSimulator`, `UnitarySimulator` method parameter | `backend.set_options(method='GPU')` | `backend.set_options(device='GPU')` | Low (simple parameter change) | SE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Update | 0.18.x → 0.30.0 | New parameter_binds kwarg for run() | `AerSimulator.run()`, `QasmSimulator.run()`, `StatevectorSimulator.run()`, `UnitarySimulator.run()` | `backend.run(circuit, shots=shots)` | `backend.run(circuit, shots=shots, parameter_binds=[{theta: [0, 3.14, 6.28]}])` | Moderate (new parameter syntax) | SE/QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Update | 0.18.x → 0.30.0 | PulseSimulator accepts QuantumCircuit input | `PulseSimulator.run()` | `backend.run(schedule)` | `backend.run(circuit)` | Moderate (input type change) | SE/QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Update | 0.18.x → 0.30.0 | Default noise model basis gates changed | `NoiseModel` | `NoiseModel(basis_gates=[\"id\", \"u3\", \"cx\"])` | `NoiseModel(basis_gates=[\"id\", \"rz\", \"sx\", \"cx\"])` | Low (parameter change) | QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Removal | 0.18.x → 0.30.0 | Removed backend_options kwarg from run() | `AerSimulator.run()`, `QasmSimulator.run()`, `StatevectorSimulator.run()`, `UnitarySimulator.run()` | `backend.run(circuit, backend_options={...})` | `backend.run(circuit, shots=1000, noise_model=noise_model)` | Moderate (parameter restructuring) | SE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| Removal | 0.18.x → 0.30.0 | Removed system_model positional arg for PulseSimulator | `PulseSimulator.run()` | `backend.run(system_model, schedule)` | `backend.run(schedule)` | Low (parameter change) | SE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| New Feature | 0.18.x → 0.30.0 | Added parallel execution support with custom executors | `AerSimulator`, executor parameter |  | `backend = AerSimulator(max_job_size=1, executor=custom_executor)` | High (new dependency management) | SE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| New Feature | 0.18.x → 0.30.0 | Added support for N-qubit Pauli gate | `qiskit.circuit.library.generalized_gates.PauliGate` |  | `circuit.append(PauliGate('XYZ'), [0,1,2])` | Low (new gate support) | QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |\n| New Feature | 0.18.x → 0.30.0 | Added mps_log_data option for matrix_product_state | `AerSimulator`, `QasmSimulator` |  | `backend.set_options(mps_log_data=True)` | Low (new option) | QSE | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#0.30.0) |",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743714961,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 1373,
+    "prompt_tokens": 2936,
+    "total_tokens": 4309,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 2552
+  },
+  "temperature": 0.1,
+  "max_tokens": 2500,
+  "n": 1,
+  "stream": false,
+  "seed": 12345
+}

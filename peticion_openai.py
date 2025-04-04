@@ -5,7 +5,7 @@ from utils import *
 from dotenv import load_dotenv
 
 def invoke_openai(
-    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma):
+    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma="es"):
 
     print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
@@ -75,7 +75,7 @@ def invoke_openai(
             #reasoning_effort=extra_params['reasoning_effort'],
         )
         
-        #print(completion.choices[0].message.content)
+        print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path + f"/{version_objetivo}"))
