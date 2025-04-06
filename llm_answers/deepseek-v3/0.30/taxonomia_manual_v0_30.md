@@ -1,5 +1,3 @@
-
-
 | Categoría | Versión | Cambio | Resumen | Ej. de código en versión origen | Ej. de código en versión destino | Dificultad | Ambito | Referencia |
 | :---- | ----- | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
 | Incremento Q-Aer Primitivas  | 0.29 → 0.30 | Compuertas añadidas a la librería de Backends Simulators de Aer: **SXdgGate** y **CUGate**  |  |  |  | Baja | QSE | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.30 |

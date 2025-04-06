@@ -92,60 +92,58 @@ def obtener_ultimas_dos_secciones(ruta):
 def obtener_system_prompt(version_objetivo, idioma="es") -> str:
 
     base_prompt = '''
-    Eres un asistente experto en ingeniería de software cuántica, altamente capacitado en el ecosistema qiskit y sus liberaciones de versión. 
-    Genere una tabla Markdown con 9 columnas:
-    | Tipo de Cambio | Flujo de Cambio | Resumen | Artefactos afectados | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto SE/QSE | Referencias |
-    | :- | :-: | :- | :- | :- | :- | :-: | :-: | :- |
+    Eres un **asistente experto en ingeniería de software cuántica, altamente capacitado en el ecosistema qiskit y sus liberaciones de versión**. Tu tarea es analizar y resumir los cambios de la versión {qiskit_vo_3d} de Qiskit, generando una tabla Markdown con información detallada sobre cada escenario de migración.
+    La tabla debe contener los siguientes campos:
+    | Tipo | Flujo | Resumen | Artefactos | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto | Referencias |
+    | :- | :-: | :- | :- | :- | :- | :- | :- | :- |
     - Columnas:
-    1. Tipo de Cambio (inserción, actualización, deprecación, cambio de estructura de módulos, nueva librería, etc)
-    2. Flujo de Cambio: versiones qiskit, origen y destino, la versión de origen es la última versión estable anterior a la versión destino, ej: `0.44.x → 1.0.0` (dígito menos significativo: `.x`)
-    3. Resumen del cambio, con formato: `Tipo de Cambio` + `Descripción breve`
-    4. Artefactos software/hardware implicados, con formato:
+    1. **Tipo**:
+        - Categoría: permite categorizar el tipo de cambio en base a su naturaleza
+            Ej: Inserción, actualización, deprecación, remoción, cambio estructural, semántico, sintáctico, librería, dependencia, etc)
+        - Módulo: identifica el módulo del ecosistema qiskit afectado 
+            Ej: `qiskit-aer`, `qiskit-terra`, `qiskit-ibm-runtime`, etc.)
+    2. **Flujo**: identifica la versión 'origen' que introdujo el artefacto afectado y la 'destino', con formato:
+        - `vO.Ox → vD.D.x` (ej: `v0.44.x → v1.0.x`), último dígito (bug-fixes) no especificado "-.-.x"
+        - Restricción: vO.O.x >`0.05.x` y vD.D.x = `{qiskit_vo_2d}.x`, si no se encuentra vO.O.x, utilizar la inmediatamente anterior a `{qiskit_vo_2d}.0`     
+    3. **Resumen**: aclara la función principal del cambio, con formato:
+        - `Descripción breve` (ej: `Cambio de nombre de clase`, `Cambio de formato de retorno`, `Nueva librería`, etc.)
+        - `Descripción detallada` (ej: `Cambio de nombre de clase QuantumCircuit.data a QuantumCircuit.bind_parameters`)
+    4. **Artefactos** software/hardware implicados, con formato:
         - `Clase` (ej: `QuantumCircuit`, `Transpiler`, `QuantumResult`, etc.)
-    5/6. Código de ejemplo pre/post migración
-    7. Dificultad, representa la dificultad asociada al escenario de migración, con valores posibles:
-    7.1 `Alta`: implica cambios estructurales, complejos y relevantes
-    7.2 `Moderada`: implica algunos pocos, sin demasiado trabajo de refactor
-    7.3 `Baja`: implica una refactorización sencilla, ej: renombrado de clase, método o parámetro, etc.
-    7.4 `Mínima`: sin impacto ni complejidad de migración, usualmente incrementos funcionales; ej: mejora interna,nueva funcionalidad o parámetro
-    8. Impacto asociado a la ingeniería de software clasica (SE) o cuántica (QSE), con valores posibles:
-    8.1 `QSE`: afecta a la ing. de software cuántica, ej: compuertas, transpilación, primitivas, topologías, siumladores, etc.
-    8.2 `SE`: afecta a la ing. de software clásica, ej: migración de módulos, jerarquía de clases, modularización de componentes, etc. 
-    - Estas opciones no son exclusivas, es decir, un mismo escenario puede agrupar ambas
-    9. Enlaces oficiales validados
+    5/6. **Código Pre/Post-Migración**: código Python válido de ejemplo
+    7. **Dificultad**, representa la dificultad asociada al escenario de migración, con valores posibles:
+        7.1 `Alta`: implica cambios estructurales, complejos y relevantes
+        7.2 `Moderada`: implica algunos pocos, sin demasiado trabajo de refactor
+        7.3 `Baja`: implica una refactorización sencilla, ej: renombrado de clase, método o parámetro, etc.
+        7.4 `Mínima`: sin impacto ni complejidad de migración, usualmente incrementos funcionales; ej: mejora interna,nueva funcionalidad o parámetro
+        - Formato: `Alta`/`Moderada`/`Baja`/`Mínima` + (breve justificación) Ej: Alta (requiere la instalación de paquetes)
+    8. **Impacto** asociado a la ingeniería de software clasica (SE) o cuántica (QSE), opciones no excluyentes, con valores posibles:
+        8.1 `QSE`: el escenario afecta sobre ing. de software cuántica. Ej: compuertas, transpilación, primitivas, topologías, siumladores, etc.
+        8.2 `SE`: el escenario afecta sobre ing. de software clásica. Ej: migración de módulos, jerarquía de clases, modularidad, etc.
+        Formato: `QSE`/`SE` + (breve justificación) Ej: QSE (afecta operadores cuánticos), SE (mejora de modularidad)
+    9. **Referencias** correctas, verificadas y accesibles, con formato:
+        - `Release Notes`/`Changelog GitHub`/`Documentation oficial`/`Migration Guides`, si hay más de una, separadas por salto de línea
+        - Enunciar todas las referencias halladas, separadas por salto de línea
+
     Restricciones críticas:
-    - Fuente de información primordial a considerar, el usuario la indicará entre triple guión-bajo (___)
-    - No admitas escenarios replicados, nunca una fila de la tabla puede coincidir en columnas "Tipo de Cambio", "Resumen" y "Artefactos afectados"
-    - Formato:
-    - **Respuesta esperada, una única tabla con sintaxis Markdown válida**
-    - Columna 5/6, sólo con **código python válido**
-    - Columna 2. "Flujo de Cambio"
-    - `o.o.x → d.d.x` (dígito menos significativo: `.x`)
-    - versión de origen ≥ 0.05.x y versión destino ≤ {qiskit_vo}.0
-    - Columna 7. "Dificultad", con formato: `Alta`/`Moderada`/`Baja`/`Mínima` + breve descripción justificativa entre paréntesis Ej: Alta (requiere la instalación de paquetes)
-    - Columna 8. "Referencias", con formato: **`Release Notes`/`Changelog GitHub`/`Documentation oficial`/`Migration Guides`**, si hay más de una, separadas por salto de línea
-    - Descripción abarcativa, exhaustiva y completa de todos los scenarios descriptos atómicamente, 1 cambio por fila incluso si:
-    - Afecta un mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`)
-    - Coincide el "Tipo de Cambio": no permitir listados con "<br>+", "•" u otros separadores internos en una celda
-    - Si un cambio implica múltiples aspectos (ej: deprecación + migración), crear filas separadas
-    - Celdas opcionales, utiliza ejemplos validados pero si no encuentra mantenlas vacías:
-    - Columna 5. "Código Pre-Migración", columna vacía o con código python válido
-    - Columna 6. "Código Post-Migración", columna vacía o con código python válido
-    - Columna 9. "Referencias", enlaces a Release Notes, Changelog GitHub, Documentation oficial o Migration Guides
-    - Hipervínculos correctos y accesibles
-    - Utilizar exclusivamente **enlaces a fuentes oficiales** en este orden:
-        1. Release Notes (`https://docs.quantum.ibm.com/api/qiskit/release-notes`)
-        2. Changelog GitHub (`https://github.com/Qiskit/qiskit/releases/tag/{qiskit_vo}.0`)
-        3. Documentation oficial (`https://docs.quantum.ibm.com/`)
-        4. Migration Guides (`https://docs.quantum.ibm.com/migration-guides`)
-    - No usar documentación histórica pre-{qiskit_vo}.0, ni secciones: "Prelude" o "Bug Fixes"
-    - Intenta enunciar todas las referencias halladas específicamente, no te limites a una sola, si existen varias, enuncialas
+    - Fuente de información primordial a considerar, el usuario la indicará entre triple guión-bajo (`___`)
+    - Atomicidad e independencia de escenarios:
+        1. Evita escenarios replicados, nunca una fila de la tabla puede coincidir en columnas "Tipo de Cambio", "Resumen" y "Artefactos afectados"
+        2. No permitir listados con "<br>+", "•" u otros separadores internos en una celda, excepto en "Referencias"
+        4. Si implica múltiples aspectos (ej: deprecación + migración), crear filas separadas
+        5. Si afecta un mismo módulo (ej: `QuantumCircuit.data` ≠ `QuantumCircuit.compose`), crear filas separadas
+    - Columnas 4,8 y 9 admiten múltiples valores, separados por salto de línea
+    - Columna 9. Referencias admite sólo URLs válidas, no texto adicional
     - Exclusiones:
-    - Bug Fixes, errores en versiones menores, escenarios hipotéticos y cambios sin documentacion oficial de respaldo
-    - Texto contenido por fuera de la tabla solicitada, sin wrappers adicionales
-    - **Ejemplo paradigmático**: | Nueva librería | 0.44.x → 1.0.0 | Introducción de librería: `qiskit-dynamics` en simulaciones | módulo `qiskit-dynamics` |  | `from qiskit_dynamics import Solver` | Alta (nueva dependencia) | QSE (requiere actualizar entornos) | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#1.0.0) [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) |'''
+        - Respuesta buscada, una única tabla con sintaxis Markdown válida, no incluir encabezados, wrappers, pies de página, ni texto adicional
+        - Valores "N/A" o "N/D" en las columnas "Código Pre/Post-Migración", dejar celdas vacías ("")
+        - `Bug Fixes`, errores en versiones menores, escenarios hipotéticos y cambios sin documentacion oficial de respaldo
+        - `Prelude`, documentación histórica pre-{qiskit_vo_3d}, cambios en versiones menores, escenarios hipotéticos y cambios sin documentacion oficial de respaldo
+    '''
     
     technical_terms = {
+        'qiskit_vo_2d': 'qiskit_vo_2d',
+        'qiskit_vo_3d': 'qiskit_vo_3d',
         'qiskit': 'qiskit',
         'Markdown': 'Markdown',
         'Release Notes': 'Release Notes',
@@ -153,57 +151,57 @@ def obtener_system_prompt(version_objetivo, idioma="es") -> str:
         'Migration Guides': 'Migration Guides',
         'QuantumCircuit.data': 'QuantumCircuit.data',
         'SE/QSE': 'SE/QSE',
-        'qiskit-aer': 'qiskit-aer'
+        'wrappers': 'wrappers',
+        'qiskit-aer': 'qiskit-aer',
+        'Bug Fixes': 'Bug Fixes',
+        'qiskit-dynamics': 'qiskit-dynamics',
+        'qiskit-ibm-runtime': 'qiskit-ibm-runtime',
+        'Prelude': 'Prelude',
     }
 
     params = {
-         "qiskit_vo": version_objetivo
+         "qiskit_vo_2d": version_objetivo, "QISKIT_VO_2D": version_objetivo,
+         "qiskit_vo_3d": f"{version_objetivo}.0", "QISKIT_VO_3D": f"{version_objetivo}.0",
     }
 
     prompt_traducido = traducir(base_prompt, idioma, technical_terms, params)
-    #print(f"Prompt de sistema: \n {prompt_traducido}")
+
     return prompt_traducido
 
 def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, idioma="es") -> str:
     
     base_prompt = '''
-		Genera una tabla Markdown lo más exhaustiva, abarcativa y completa posible, para cada escenario de migración Qiskit para la versión destino: {qiskit_vo}.0:
-        - Fuente Primordial de información:
-			Qiskit Release Notes versión {qiskit_vo}.0: {qrn}
-		Directivas de análisis: 
-			1. Escenarios (filas de la tabla):
-				- Modificaciones sobre la API (clases y métodos fundamentales, parámetros y estructura)
-				- Reestructuraciones de módulos (qiskit.* → qiskit_*) y migración de funcionalidades
-				- Cambios en defaults/formatos de retorno (ej: dict → clase)
-				- Migración a paquetes externos y nuevas librerías (ej: requiere pip install)
-				- Nuevas funcionalidades, actualizaciones y deprecaciones en versión {qiskit_vo}.0
-			2. Artefactos Afectados:  
-				- Clases: `QuantumCircuit`, `Transpiler` 
-				- Métodos: `QuantumCircuit.bind_parameters()`  
-				- Paquetes: `qiskit-terra` → `qiskit`  
-				- Dependencias: `numpy ≥ 1.21`
-			3. Tipo de Cambio:: 
-				- **API**: Métodos, clases, parámetros
-				- **Módulos**: Reestructuración `qiskit.*` → `qiskit_*` 
-				- **Formatos**: `dict` → `QuantumResult`
-				- **Dependencias**: Nueva librería (`qiskit-dynamics`) 
-			4. Criterios de Inclusión:  
-				- Filas independientes por tipo de cambio (ej: inserción ≠ actualización ≠ deprecación ≠ reestructuración)
-				- Migraciones documentadas pero sin ejemplos de código origen o destino
+		Genera una tabla en formato Markdown lo más exhaustiva, abarcativa, descriptiva y completa posible, para cada escenario de migración qiskit:
+        - **Fuente Primordial de información**:
+			{qrn}
+        - **Fuente Secundaria de información**:
+            1. Release Notes (`https://docs.quantum.ibm.com/api/qiskit/release-notes/{qiskit_vo_2d}`)
+            2. Changelog GitHub (`https://github.com/Qiskit/qiskit/releases/tag/{qiskit_vo_3d}`)
+            3. Documentation oficial (`https://docs.quantum.ibm.com/`)
+            4. Migration Guides (`https://docs.quantum.ibm.com/migration-guides`)
+                    
+        **Ejemplo paradigmatico de escenario**: 
+        | Nueva librería | 0.44.x → 1.0.x | Introducción de librería: `qiskit-dynamics` en simulaciones | módulo `qiskit-dynamics` |  | `from qiskit_dynamics import Solver` | Alta (requiere instalar la nueva dependencia) | QSE (requiere actualizar entornos) | [Release Notes](https://docs.quantum.ibm.com/api/qiskit/release-notes#1.0.0) \n [Migration Guides](https://docs.quantum.ibm.com/migration-guides/qiskit-1.0) |
    '''
     
     technical_terms = {
         'qiskit': 'qiskit',
-        'Markdown': 'qiskit-terra',
+        'qiskit_vo_3d': 'qiskit_vo_3d',
+        'qiskit_vo_2d': 'qiskit_vo_2d',
+        'qrn': 'qrn',
+        'Markdown': 'Markdown',
         'Release Notes': 'Release Notes',
         'Changelog GitHub': 'GitHub Changelog',
         'Migration Guides': 'Migration Guides',
-        'Transpiler': 'Transpiler'
+        'Transpiler': 'Transpiler',
+        'QuantumResult': 'QuantumResult'
     }
 
     params = {
-         "qiskit_vo": version_objetivo,
-         "qrn": f"\n\n___{file_content}___\n\n" if inyectar_qiskit_release_notes else f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{version_objetivo}"
+         "qiskit_vo_2d": version_objetivo, "QISKIT_VO_2D": version_objetivo,
+         "qiskit_vo_3d": f"{version_objetivo}.0", "QISKIT_VO_3D": f"{version_objetivo}.0",
+         "qrn": f"\n___{file_content}___\n" if inyectar_qiskit_release_notes else f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{version_objetivo}",
+         "QRN": f"\n___{file_content}___\n" if inyectar_qiskit_release_notes else f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{version_objetivo}"
     }
     
     prompt_traducido = traducir(base_prompt, idioma, technical_terms, params)

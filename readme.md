@@ -71,11 +71,26 @@ Ejemplo de configuración (archivo .env):
 	# Indica la versión de qiskit para la generación de la tabla
 	DEFAULT_VERSION="0.25"
 
-	# Indica la temperatura del modelo (0 menos grados de libertad)
+	
 	TEMPERATURE=0
 
 	# Indica si ejecutar o no una etapa de verificación de la info del release note, con la copiada desde esa url
 	EJECUTAR_ETAPA_VERIFICACION=False
+
+	# Parametrizaciones de la invocación al modelo
+	TEMPERATURE=0.1	# Indica la temperatura del modelo (0 menos grados de libertad)
+	#TOP_P=0.1
+	MAX_TOKENS=3000 # Indica la cantidad máxima de tokens permitidos en la respuesta
+	#FREQUENCY_PENALTY=0.5
+	#PRESENCE_PENALTY=0.3
+	#STOP=["###", "```", "<!--", "\n#"]
+	#N=1
+	STREAM=False
+	#SEED=12345
+	#REASONING_EFFORT=0.8
+
+	IDIOMA="en" # Indica el idioma del prompt y la documentación utilizada (afectará la respuesta)
+
 ```
 
 ## Información de tokens y caracteres de las notas de liberación

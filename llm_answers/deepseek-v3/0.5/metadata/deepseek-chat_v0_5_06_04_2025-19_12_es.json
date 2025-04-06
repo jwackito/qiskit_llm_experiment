@@ -1,0 +1,33 @@
+{
+  "id": "9296459b-8f84-406a-b22c-d649e0635310",
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "```markdown\n| Tipo | Flujo | Resumen | Artefactos | Código Pre-Migración | Código Post-Migración | Dificultad | Impacto | Referencias |\n| :- | :-: | :- | :- | :- | :- | :- | :- | :- |\n| Deprecación | v0.4.x → v0.5.x | Reemplazo de métodos en QuantumProgram para interacción con backends y API | QuantumProgram | `quantum_program.set_api(token, url)`<br>`backends = quantum_program.available_backends()`<br>`print(quantum_program.get_backend_status('ibmqx4'))` | `register(token, url)`<br>`backends = available_backends()`<br>`backend = get_backend('ibmqx4')`<br>`print(backend.status)` | Moderada (refactorización de llamadas) | SE (cambio en la interfaz de programación) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n| Deprecación | v0.4.x → v0.5.x | Reemplazo de QuantumProgram.execute por función de nivel superior | QuantumProgram | `quantum_program.execute(circuit, args, ...)` | `from qiskit import execute`<br>`execute(circuit, args, ...)` | Baja (cambio sintáctico simple) | SE (simplificación de API) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n| Cambio estructural | v0.4.x → v0.5.x | Homogeneización de nombres de simuladores locales | Backend | `get_backend('local_qiskit_simulator')` | `get_backend('local_qasm_simulator_cpp')` | Moderada (requiere actualizar nombres) | QSE (afecta configuración de backends) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n| Nueva funcionalidad | v0.4.x → v0.5.x | Sistema de alias para selección automática de backends | Backend |  | `get_backend('local_statevector_simulator')` | Mínima (no requiere cambios) | QSE (mejora en selección de backends) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n| Cambio sintáctico | v0.4.x → v0.5.x | Auto-naming para registros y circuitos | QuantumRegister<br>ClassicalRegister<br>QuantumCircuit | `q = QuantumRegister(2, 'q')` | `q = QuantumRegister(2)` | Baja (parámetro opcional) | SE (mejora en usabilidad) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n| Cambio semántico | v0.4.x → v0.5.x | Flexibilidad en métodos que aceptan nombres o instancias | Result | `data = result.get_data('my_circuit')` | `data = result.get_data(qc)`<br>`data = result.get_data()` | Baja (múltiples formas válidas) | SE (mejora en flexibilidad de API) | https://docs.quantum.ibm.com/api/qiskit/release-notes/0.5<br>https://github.com/Qiskit/qiskit/releases/tag/0.5.0 |\n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1743977536,
+  "model": "deepseek-chat",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_3d5141a69a_prod0225",
+  "usage": {
+    "completion_tokens": 904,
+    "prompt_tokens": 3193,
+    "total_tokens": 4097,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 3193
+  },
+  "temperature": 0.1,
+  "max_tokens": 3000,
+  "n": 1,
+  "stream": false,
+  "seed": 42
+}

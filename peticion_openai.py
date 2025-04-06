@@ -58,6 +58,7 @@ def invoke_openai(
 
         extra_params = obtener_parametrizacion()
 
+        # Parametrización del completions, escencialmente el resto de campos es tomado con valores por defecto
         completion = client.chat.completions.create(
             model=extra_params['model'], 
             messages=messages, 
@@ -71,11 +72,11 @@ def invoke_openai(
             #stop=extra_params['stop'],
             #n=extra_params['n'],
             stream=extra_params['stream'],
-            seed=extra_params['seed'],
+            #seed=extra_params['seed'],
             #reasoning_effort=extra_params['reasoning_effort'],
         )
         
-        print(completion.choices[0].message.content)
+        #print(completion.choices[0].message.content)
 
         # Crear la carpeta "llm_answers" si no existe
         llm_answers_dir = os.path.normpath(os.path.join(os.getcwd(), model_answers_path + f"/{version_objetivo}"))
@@ -87,7 +88,7 @@ def invoke_openai(
         modelo_base = (
             extra_params['model'].split('/', 1)[1] if '/' in extra_params['model'] else extra_params['model']
         )
-        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}"
+        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}_{idioma}"
 
         guardar_metadata_completion(completion, llm_answers_dir, file_name, params=extra_params)
 
