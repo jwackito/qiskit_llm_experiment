@@ -11,6 +11,7 @@ Add qiskit library SXdgGate and CUGate to the supported basis gates for the Aer 
 Adds support for N-qubit Pauli gate ( qiskit.circuit.library.generalized_gates.PauliGate) to all simulation methods of the AerSimulator and QasmSimulator.
 Adds the ability to set a custom executor and configure job splitting for executing multiple circuits in parallel on a HPC clustor. A custom executor can be set using the executor option, and job splitting is configured by using the max_job_size option.
 For example configuring a backend and executing using
+
 ```python
 backend = AerSimulator(max_job_size=1, executor=custom_executor)
 job = backend.run(circuits)

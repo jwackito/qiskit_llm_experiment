@@ -11,7 +11,6 @@ Cambios en QuantumProgram
 Varios métodos de la clase QuantumProgram están en camino de ser obsoletos:
 métodos para interactuar con los backends y la API:
 La forma recomendada para abrir una conexión a la API de IBM Q y para utilizar los backends es a través de las funciones de nivel superior directamente en lugar de los métodos QuantumProgram. En particular, el método qiskit.register() proporciona el equivalente de la anterior llamada qiskit.QuantumProgram.set_api(). De forma similar, hay un nuevo qiskit.available_backends(), qiskit.get_backend() y funciones relacionadas para consultar directamente los backends disponibles. Por ejemplo, el siguiente fragmento para la versión 0.4:
-
 ```python
 from qiskit import QuantumProgram
 quantum_program = QuantumProgram()
