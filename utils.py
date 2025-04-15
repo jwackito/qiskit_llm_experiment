@@ -35,18 +35,18 @@ def generar_diagrama():
 	fig, ax = plt.subplots(figsize=(14, 7))
 
 	# Crear barras
-	rects1 = ax.bar(x, cant_caracteres, ancho, color='deepskyblue', label='Caracteres en nota de liberación Qiskit')
-	rects2 = ax.bar(x - sesgo, tokens_gemma, sesgo, color='aquamarine', label='Tokens gemma-3-27b-it')
-	rects3 = ax.bar(x + sesgo, tokens_qween, sesgo, color='plum', label='Tokens qween-r1-32b')
+	rects1 = ax.bar(x, cant_caracteres, ancho, color='deepskyblue', label='# Release Note characters')
+	rects2 = ax.bar(x - sesgo, tokens_gemma, sesgo, color='aquamarine', label='# Google-Gemma-3-27b-it-GGUF tokens')
+	rects3 = ax.bar(x + sesgo, tokens_qween, sesgo, color='plum', label='# DeepSeek-R1-Distill-Qween-32b-GGUF tokens')
 
 	# Personalización
-	ax.set_title('Evolución de cantidad de líneas de notas de liberación y tokens', pad=20)
-	ax.set_xlabel('Número de versión Qiskit')
-	ax.set_ylabel('Cantidad')
+	ax.set_title('Evolution of character and token counts, in release notes', pad=20)
+	ax.set_xlabel('Qiskit Version Number')
+	ax.set_ylabel('Count')
 	ax.set_xticks(x)
 	ax.set_xticklabels(versiones, rotation=45, ha='right')
 	ax.set_ylim(0, 70000)
-	ax.axhline(y=45000, color='darkorange', linestyle='-', alpha=0.3, label='Documentación de liberación abundante')
+	ax.axhline(y=45000, color='darkorange', linestyle='-', alpha=0.3, label='Limit on the amount of significant documentation')
 	ax.legend()
 
 	# Añadir valores
@@ -56,7 +56,7 @@ def generar_diagrama():
 	ax.bar_label(rects2, padding=padding, fmt='%d', fontsize=font_size, rotation=45)
 	ax.bar_label(rects3, padding=padding, fmt='%d', fontsize=font_size, rotation=45)
 
-	plt.tight_layout()
+	plt.tight_layout(); plt.savefig('tokens.pdf', format="pdf", dpi=300)
 	plt.show()
 
 def probar_tokenizer():
