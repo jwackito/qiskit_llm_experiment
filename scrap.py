@@ -4,6 +4,7 @@ from peticion_openai import invoke_openai
 from verificacion import verificar_documentacion
 from dotenv import load_dotenv
 from utils import obtener_ultimas_dos_secciones
+from tavily import TavilyClient
 
 def clean_content(soup):
 
@@ -70,6 +71,11 @@ def extract_main_content(url):
     
     return text
 
+def extract_main_content2(url):
+    client = TavilyClient(TAVILY_API_KEY)
+    res = tavily_client.extract(url)
+    return res['results'][0]['raw_content'])
+
 def bool_conv(valor):
     return valor.strip().lower() == "true"
 
@@ -106,7 +112,7 @@ if __name__ == "__main__":
     # Buscar contenido de qiskit release notes ... si no lo encuentra lo trae del sitio
     path_acortado = obtener_ultimas_dos_secciones(file_path)
     if not os.path.exists(file_path):
-        content = extract_main_content(url_qiskit_release_notes)
+        content = extract_main_content2(url_qiskit_release_notes)
 
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
