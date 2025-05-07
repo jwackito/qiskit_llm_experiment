@@ -74,7 +74,7 @@ def extract_main_content(url):
 def extract_main_content2(url):
     client = TavilyClient(TAVILY_API_KEY)
     res = tavily_client.extract(url)
-    return res['results'][0]['raw_content'])
+    return res['results'][0]['raw_content']
 
 def bool_conv(valor):
     return valor.strip().lower() == "true"
