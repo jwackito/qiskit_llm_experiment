@@ -92,7 +92,7 @@ Ejemplo de configuración (archivo .env):
 	IDIOMA="en" # Indica el idioma del prompt y la documentación utilizada (afectará la respuesta)
 
 ```
-
+#TODO: en el diagrama de cálculo, sería genial que con otra barra se ingrese este dato de lo ocupado por los prompts
 ## Información de tokens y caracteres de las notas de liberación
 
 	- prompt de sistema:

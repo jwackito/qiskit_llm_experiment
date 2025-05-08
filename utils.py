@@ -2,6 +2,7 @@ import sys, os, json
 import matplotlib.pyplot as plt
 import numpy as np
 from deep_translator import GoogleTranslator
+import tiktoken
 
 def generar_diagrama():
 
@@ -59,7 +60,7 @@ def generar_diagrama():
 	plt.tight_layout(); plt.savefig('tokens.pdf', format="pdf", dpi=300)
 	plt.show()
 
-def probar_tokenizer():
+def tokenizer():
 
 	from transformers import AutoTokenizer
 
@@ -88,6 +89,14 @@ def obtener_ultimas_dos_secciones(ruta):
     
     # Reconstruir la subruta con el separador original
     return os.sep.join(ultimas_dos)
+
+#TODO: la idea con esta función, sería que el diagrama se genere automáticamente utilizándolo
+def count_tokens(file_path="", model_name="gpt-4"):
+    encoding = tiktoken.encoding_for_model(model_name)
+    with open(file_path, 'r', encoding='utf-8') as f:
+        file_content = f.read()
+    cant_tokens = len(encoding.encode(file_content))
+    print(f'El contenido del archivo "{file_path}" para el modelo: "{model_name}" ocupa: {cant_tokens} tokens')
 
 def obtener_system_prompt(version_objetivo, idioma="es") -> str:
 
@@ -258,7 +267,7 @@ def obtener_parametrizacion():
 		"model": os.getenv("MODEL", "gpt-4"),
 		"temperature": float(os.getenv("TEMPERATURE", 0.5)),
 		"top_p": float(os.getenv("TOP_P", 1.0)),
-		"max_tokens": int(os.getenv("MAX_TOKENS", 1000)),
+		"max_tokens": int(os.getenv("MAX_TOKENS", 4096)),
 		"frequency_penalty": float(os.getenv("FREQUENCY_PENALTY", 0.0)),
 		"presence_penalty": float(os.getenv("PRESENCE_PENALTY", 0.0)),
 		"stop": json.loads(os.getenv("STOP", "[]")),
@@ -292,3 +301,6 @@ if __name__ == "__main__":
         
     if len(sys.argv) > 1 and sys.argv[1] == "diagrama":
         generar_diagrama()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "tokens":
+        count_tokens(sys.argv[2], sys.argv[3])

@@ -75,6 +75,7 @@ def extract_main_content_using_tavily(url):
     client = TavilyClient(args.tavily)
     res = client.extract(url)
     return res['results'][0]['raw_content']
+#ver param del extract basic o advanced ...
 
 def bool_conv(valor):
     return valor.strip().lower() == "true"
@@ -90,8 +91,8 @@ if __name__ == "__main__":
     parser.add_argument("--version", type=str, help="Versión de Qiskit para la cual extraer las notas de la versión", default=os.getenv("DEFAULT_VERSION"))
     parser.add_argument("--inyecta_info_qrn", type=bool, help="Flag que indica la utilización de Qiskit release notes como fuente de información", default=bool_conv(os.getenv("INYECTA_INFO_QRN", False)))
     parser.add_argument("--scrapped_path", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("SCRAP_DIRECTORY"))
-    parser.add_argument("--url_openai_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("URL_OPENAI_SERVER_ENDPOINT"))
-    parser.add_argument("--openai_api_key", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("OPENAI_API_KEY"))
+    parser.add_argument("--url_server_endpoint", type=str, help="Directorio donde se almacenan las notas de la versión", default=os.getenv("URL_SERVER_ENDPOINT"))
+    parser.add_argument("--api_key", type=str, help="Clave de acceso al servicio externo utilizado", default=os.getenv("API_KEY"))
     parser.add_argument("--model_answers_path", type=str, help="Directorio donde se almacenan las respuestas del modelo", default=os.getenv("MODEL_OUTPUT_DIRECTORY"))
     parser.add_argument("--invoke_openai", type=bool, help="Flag que indica si invocar a la api de openai", default=bool_conv(os.getenv("REMOTE_INVOKE", False)))
     parser.add_argument("--temperature", type=float, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
@@ -115,7 +116,8 @@ if __name__ == "__main__":
     path_acortado = obtener_ultimas_dos_secciones(file_path)
     if not os.path.exists(file_path):
         #TODO: agregar luego lo del corte de la data ...
-        content = extract_main_content_using_tavily(url_qiskit_release_notes)
+        content = extract_main_content(url_qiskit_release_notes)
+        #content = extract_main_content_using_tavily(url_qiskit_release_notes)
 
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content if args.idioma == "en" else traducir(content, args.idioma))
@@ -127,8 +129,8 @@ if __name__ == "__main__":
         openai_response = invoke_openai(
             version_objetivo = args.version, 
             url_objetivo = url_qiskit_release_notes, 
-            url_openai_server_endpoint = args.url_openai_server_endpoint, 
-            openai_api_key = args.openai_api_key, 
+            url_server_endpoint = args.url_server_endpoint, 
+            api_key = args.api_key, 
             usar_qiskit_release_notes = args.inyecta_info_qrn, 
             model_answers_path = args.model_answers_path, 
             project_id = args.project_id,

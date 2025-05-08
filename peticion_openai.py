@@ -5,13 +5,15 @@ from utils import *
 from dotenv import load_dotenv
 
 def invoke_openai(
-    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma="es"):
+    version_objetivo, url_objetivo, url_server_endpoint, api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma="es"):
 
-    print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
+    print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...
+        {f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}
+        \n\n[PROCESANDO] ... INVOCACIÓN REMOTA AL SERVICIO ...\n\n''')
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {openai_api_key}",
+        "Authorization": f"Bearer {api_key}",
         "OpenAI-Project": project_id
     }
 
@@ -52,8 +54,8 @@ def invoke_openai(
     try:
         
         client = OpenAI(
-            base_url=url_openai_server_endpoint, 
-            api_key=openai_api_key
+            base_url=url_server_endpoint, 
+            api_key=api_key
         )
 
         extra_params = obtener_parametrizacion()
@@ -64,14 +66,14 @@ def invoke_openai(
             messages=messages, 
             temperature=extra_params['temperature'],
             #top_p=extra_params['top_p'],
-            max_tokens=extra_params['max_tokens'],
+            #max_tokens=extra_params['max_tokens'],
             #frequency_penalty=extra_params['frequency_penalty'],
             #presence_penalty=extra_params['presence_penalty'],            
             #response_format=extra_params['response_format'],
             #system_prompt_ratio=extra_params['system_prompt_ratio'],
             #stop=extra_params['stop'],
             #n=extra_params['n'],
-            stream=extra_params['stream'],
+            #stream=extra_params['stream'],
             #seed=extra_params['seed'],
             #reasoning_effort=extra_params['reasoning_effort'],
         )

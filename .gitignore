@@ -1,3 +1,9 @@
 # Ignorar archivos de configuración de entorno
 .env
-.vscode/settings.json
+
+# Ignorar archivos asociados al entorno del IDE (vscode)
+.vscode/
+
+# Ignorar archivos asociados al entorno Python
+__pycache__/
+qiskit_env/
