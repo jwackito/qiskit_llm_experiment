@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 from peticion_openai import invoke_openai
 from verificacion import verificar_documentacion
 from dotenv import load_dotenv
-from utils import obtener_ultimas_dos_secciones
 from tavily import TavilyClient
+from utils import *
 
 def clean_content(soup):
 
@@ -71,9 +71,9 @@ def extract_main_content(url):
     
     return text
 
-def extract_main_content2(url):
-    client = TavilyClient(TAVILY_API_KEY)
-    res = tavily_client.extract(url)
+def extract_main_content_using_tavily(url):
+    client = TavilyClient(args.tavily)
+    res = client.extract(url)
     return res['results'][0]['raw_content']
 
 def bool_conv(valor):
@@ -97,26 +97,29 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", type=float, help="Temperatura del modelo", default=os.getenv("TEMPERATURE"))
     parser.add_argument("--verificacion", type=bool, help="Flag que indica si ejecutar las verificaciones de contenidos obtenidos", default=bool_conv(os.getenv("EJECUTAR_ETAPA_VERIFICACION", False)))
     parser.add_argument("--project_id", type=str, help="Clave del proyecto OpenAI", default=os.getenv("PROJECT_ID"))
+    parser.add_argument("--idioma", type=str, help="Idioma de prueba", default=os.getenv("IDIOMA", "es"))
+    parser.add_argument("--tavily", type=str, help="Herramienta de parseo", default=os.getenv("TAVILY_API_KEY"))
 
     args = parser.parse_args()
 
     url_qiskit_release_notes = f"https://docs.quantum.ibm.com/api/qiskit/release-notes/{args.version}"
     downloads_dir = os.path.join(os.getcwd(), args.scrapped_path)
-    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}.md")
+    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{args.version}_{args.idioma}.md")
 
     # Crear la carpeta "scrapped_content" si no existe
     if not os.path.exists(downloads_dir):
         print(f"\n [INFO] Creando el directorio ... {downloads_dir}")
         os.makedirs(downloads_dir)
 
-    # Buscar contenido de qiskit release notes ... si no lo encuentra lo trae del sitio
+    # Buscar contenido de qiskit release notes ... si no lo encuentra lo trae del sitio oficial
     path_acortado = obtener_ultimas_dos_secciones(file_path)
     if not os.path.exists(file_path):
-        content = extract_main_content2(url_qiskit_release_notes)
+        #TODO: agregar luego lo del corte de la data ...
+        content = extract_main_content_using_tavily(url_qiskit_release_notes)
 
         with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"\n[INFO] Documentación inexistente, obtenida desde {url_qiskit_release_notes} guardada en: {path_acortado}")
+            f.write(content if args.idioma == "en" else traducir(content, args.idioma))
+        print(f"\n[INFO] Documentación inexistente para versión {args.version} e idioma {"español" if args.idioma.lower == "es" else "inglés"}, obtenida desde {url_qiskit_release_notes} guardada en: {path_acortado}")
     else:
         print(f"\n[OK] Contenido de notas de liberación qiskit existente, obtenido desde: {path_acortado}")
 
@@ -128,7 +131,8 @@ if __name__ == "__main__":
             openai_api_key = args.openai_api_key, 
             usar_qiskit_release_notes = args.inyecta_info_qrn, 
             model_answers_path = args.model_answers_path, 
-            project_id = args.project_id 
+            project_id = args.project_id,
+            idioma = args.idioma
         )
 
     if args.verificacion:           

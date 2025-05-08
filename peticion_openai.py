@@ -5,7 +5,7 @@ from utils import *
 from dotenv import load_dotenv
 
 def invoke_openai(
-    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id):
+    version_objetivo, url_objetivo, url_openai_server_endpoint, openai_api_key, usar_qiskit_release_notes, model_answers_path, project_id, idioma="es"):
 
     print(f'''\n[INFO] Invocación al modelo {os.getenv("MODEL")} ...{f"\nFlag 'usar_qiskit_release_notes' ON --> inyectando info de Qiskit release notes ({obtener_ultimas_dos_secciones(url_objetivo)}) en el prompt de usuario" if usar_qiskit_release_notes else "[INFO] Flag 'usar_qiskit_release_notes' OFF --> utilizando sólo urls en prompts"}''')
 
@@ -17,7 +17,7 @@ def invoke_openai(
 
     # Ruta al archivo generado por el script previo
     downloads_dir = os.path.join(os.getcwd(), "scraped_content")
-    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{version_objetivo}.md")
+    file_path = os.path.join(downloads_dir, f"qiskit_release_notes_{version_objetivo}_{idioma}.md")
 
     # Verificar si el archivo existe
     if not os.path.exists(file_path):
@@ -34,7 +34,7 @@ def invoke_openai(
             "content": [
                 {
                     "type": "text",
-                    "text": obtener_developer_prompt(url_objetivo, version_objetivo)
+                    "text": obtener_system_prompt(version_objetivo, idioma)
                 }
             ]
         },
@@ -43,7 +43,7 @@ def invoke_openai(
             "content": [
                 {
                     "type": "text",
-                    "text": obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, url_objetivo)
+                    "text": obtener_user_prompt(usar_qiskit_release_notes, version_objetivo, file_content, idioma)
                 }
             ]
         }
@@ -58,6 +58,7 @@ def invoke_openai(
 
         extra_params = obtener_parametrizacion()
 
+        # Parametrización del completions, escencialmente el resto de campos es tomado con valores por defecto
         completion = client.chat.completions.create(
             model=extra_params['model'], 
             messages=messages, 
@@ -71,7 +72,7 @@ def invoke_openai(
             #stop=extra_params['stop'],
             #n=extra_params['n'],
             stream=extra_params['stream'],
-            seed=extra_params['seed'],
+            #seed=extra_params['seed'],
             #reasoning_effort=extra_params['reasoning_effort'],
         )
         
@@ -87,7 +88,7 @@ def invoke_openai(
         modelo_base = (
             extra_params['model'].split('/', 1)[1] if '/' in extra_params['model'] else extra_params['model']
         )
-        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}"
+        file_name = f"{modelo_base}_v{version_objetivo.replace('.', '_')}_{fecha_hora}_{idioma}"
 
         guardar_metadata_completion(completion, llm_answers_dir, file_name, params=extra_params)
 
