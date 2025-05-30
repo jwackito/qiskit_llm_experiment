@@ -4,6 +4,8 @@
 # Ignorar archivos asociados al entorno del IDE (vscode)
 .vscode/
 
-# Ignorar archivos asociados al entorno Python
+# Ignorar archivos locales del entorno Python
 __pycache__/
+**/__pycache__/
+*.pyc
 qiskit_env/

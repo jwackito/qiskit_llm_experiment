@@ -178,9 +178,8 @@ def obtener_system_prompt(version_objetivo, idioma="es") -> str:
     return prompt_traducido
 
 def obtener_user_prompt(inyectar_qiskit_release_notes, version_objetivo, file_content, idioma="es") -> str:
-    
     base_prompt = '''
-		Genera una tabla en formato Markdown lo más exhaustiva, abarcativa, descriptiva y completa posible, para cada escenario de migración qiskit:
+		Genera una tabla en formato Markdown lo más exhaustiva, abarcativa, descriptiva y completa posible, para cada escenario de migración qiskit.
         - **Fuente Primordial de información**:
 			{qrn}
         - **Fuente Secundaria de información**:
